@@ -37,7 +37,7 @@ export function CategoryStrip() {
               className="shrink-0"
             >
               <Link
-                href={`/places?type=${type}`}
+                href="/register"
                 className="flex flex-col items-center gap-3 px-8 py-5 rounded-[14px] border border-[#dddddd] dark:border-[#3a3a3a] hover:border-[#222222] dark:hover:border-[#f0f0f0] hover:shadow-tier transition-all duration-200 bg-white dark:bg-[#1a1a1a] group w-36 text-center"
               >
                 <div className="w-12 h-12 rounded-full bg-[#f7f7f7] dark:bg-[#2a2a2a] flex items-center justify-center group-hover:bg-[#fff0f3] dark:group-hover:bg-[#4d1020] transition-colors duration-200">
