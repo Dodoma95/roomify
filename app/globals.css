@@ -1,0 +1,174 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  /* Airbnb custom tokens */
+  --color-rausch: var(--rausch);
+  --color-rausch-active: var(--rausch-active);
+  --color-rausch-disabled: var(--rausch-disabled);
+  --color-ink: var(--ink);
+  --color-body-text: var(--body-text);
+  --color-muted-text: var(--muted-text);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-strong: var(--surface-strong);
+  --color-hairline: var(--hairline);
+  --color-hairline-soft: var(--hairline-soft);
+  --color-border-strong: var(--border-strong);
+  /* Radius */
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: calc(var(--radius) * 1.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 4);
+  --radius-2xl: 9999px;
+}
+
+:root {
+  /* ── shadcn/ui mapped variables → Airbnb palette ─── */
+  --background: #ffffff;
+  --foreground: #222222;
+  --card: #ffffff;
+  --card-foreground: #222222;
+  --popover: #ffffff;
+  --popover-foreground: #222222;
+  --primary: #ff385c;
+  --primary-foreground: #ffffff;
+  --secondary: #f7f7f7;
+  --secondary-foreground: #222222;
+  --muted: #f7f7f7;
+  --muted-foreground: #6a6a6a;
+  --accent: #f2f2f2;
+  --accent-foreground: #222222;
+  --destructive: #c13515;
+  --border: #dddddd;
+  --input: #dddddd;
+  --ring: #222222;
+  --radius: 0.5rem;
+
+  /* ── Airbnb extended tokens ─────────────────────── */
+  --rausch: #ff385c;
+  --rausch-active: #e00b41;
+  --rausch-disabled: #ffd1da;
+  --ink: #222222;
+  --body-text: #3f3f3f;
+  --muted-text: #6a6a6a;
+  --muted-soft: #929292;
+  --surface-soft: #f7f7f7;
+  --surface-strong: #f2f2f2;
+  --hairline: #dddddd;
+  --hairline-soft: #ebebeb;
+  --border-strong: #c1c1c1;
+
+  /* ── Sidebar (admin nav) ────────────────────────── */
+  --sidebar: #f7f7f7;
+  --sidebar-foreground: #222222;
+  --sidebar-primary: #ff385c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f2f2f2;
+  --sidebar-accent-foreground: #222222;
+  --sidebar-border: #dddddd;
+  --sidebar-ring: #222222;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #f0f0f0;
+  --card: #222222;
+  --card-foreground: #f0f0f0;
+  --popover: #222222;
+  --popover-foreground: #f0f0f0;
+  --primary: #ff385c;
+  --primary-foreground: #ffffff;
+  --secondary: #2a2a2a;
+  --secondary-foreground: #f0f0f0;
+  --muted: #2a2a2a;
+  --muted-foreground: #888888;
+  --accent: #333333;
+  --accent-foreground: #f0f0f0;
+  --destructive: #ff6b4a;
+  --border: #3a3a3a;
+  --input: #3a3a3a;
+  --ring: #f0f0f0;
+
+  --rausch: #ff385c;
+  --rausch-active: #e00b41;
+  --rausch-disabled: #4d1020;
+  --ink: #f0f0f0;
+  --body-text: #cccccc;
+  --muted-text: #888888;
+  --muted-soft: #666666;
+  --surface-soft: #2a2a2a;
+  --surface-strong: #333333;
+  --hairline: #3a3a3a;
+  --hairline-soft: #2e2e2e;
+  --border-strong: #555555;
+
+  --sidebar: #222222;
+  --sidebar-foreground: #f0f0f0;
+  --sidebar-primary: #ff385c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2a2a2a;
+  --sidebar-accent-foreground: #f0f0f0;
+  --sidebar-border: #3a3a3a;
+  --sidebar-ring: #f0f0f0;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* ── Airbnb single shadow tier ───────────────────── */
+.shadow-tier {
+  box-shadow:
+    rgba(0, 0, 0, 0.02) 0 0 0 1px,
+    rgba(0, 0, 0, 0.04) 0 2px 6px 0,
+    rgba(0, 0, 0, 0.10) 0 4px 8px 0;
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
