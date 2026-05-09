@@ -78,22 +78,26 @@ export function PlaceFormWizard({
     const url    = placeId ? `/api/places/${placeId}` : "/api/places";
     const method = placeId ? "PATCH" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    setLoading(false);
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        setSubmitError(json.error ?? json.message ?? "Une erreur est survenue.");
+        return;
+      }
 
-    if (!res.ok) {
-      const json = await res.json().catch(() => ({}));
-      setSubmitError(json.message ?? "Une erreur est survenue.");
-      return;
+      router.push(backHref ?? "/places");
+      router.refresh();
+    } catch {
+      setSubmitError("Impossible de contacter le serveur.");
+    } finally {
+      setLoading(false);
     }
-
-    router.push(backHref ?? "/places");
-    router.refresh();
   }
 
   return (

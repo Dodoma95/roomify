@@ -25,8 +25,9 @@ export function StepInfo({ values, onChange, errors }: StepInfoProps) {
       </div>
       <div className="space-y-5">
         <div>
-          <label className={labelClass}>Nom de l&apos;espace *</label>
+          <label htmlFor="place-name" className={labelClass}>Nom de l&apos;espace *</label>
           <input
+            id="place-name"
             className={inputClass}
             placeholder="Ex : Salle Horizon, Studio Nord…"
             value={values.name}
@@ -37,8 +38,9 @@ export function StepInfo({ values, onChange, errors }: StepInfoProps) {
           )}
         </div>
         <div>
-          <label className={labelClass}>Description *</label>
+          <label htmlFor="place-description" className={labelClass}>Description *</label>
           <textarea
+            id="place-description"
             className="w-full px-3 py-3 rounded-lg border border-[#dddddd] text-[16px] text-[#222222] placeholder:text-[#929292] focus:outline-none focus:border-2 focus:border-[#222222] transition-colors duration-150 bg-white resize-none"
             rows={5}
             placeholder="Décrivez l'espace, ses équipements, son ambiance…"

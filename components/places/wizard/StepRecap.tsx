@@ -9,7 +9,7 @@ interface StepRecapProps {
 }
 
 export function StepRecap({ formData, onGoToStep }: StepRecapProps) {
-  const typeMeta = PLACE_TYPE_META.find((t) => t.value === formData.type)!;
+  const typeMeta = PLACE_TYPE_META.find((t) => t.value === formData.type) ?? PLACE_TYPE_META[0];
   const { Icon } = typeMeta;
 
   return (

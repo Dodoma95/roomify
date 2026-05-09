@@ -27,8 +27,9 @@ export function StepLocation({ values, onChange, errors }: StepLocationProps) {
       </div>
       <div className="space-y-5">
         <div>
-          <label className={labelClass}>Adresse *</label>
+          <label htmlFor="place-address" className={labelClass}>Adresse *</label>
           <input
+            id="place-address"
             className={inputClass}
             placeholder="12 rue de la Paix, 75002 Paris"
             value={values.address}
@@ -40,8 +41,9 @@ export function StepLocation({ values, onChange, errors }: StepLocationProps) {
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className={labelClass}>Capacité (personnes) *</label>
+            <label htmlFor="place-capacity" className={labelClass}>Capacité (personnes) *</label>
             <input
+              id="place-capacity"
               type="number"
               min={1}
               max={1000}
@@ -57,8 +59,9 @@ export function StepLocation({ values, onChange, errors }: StepLocationProps) {
             )}
           </div>
           <div>
-            <label className={labelClass}>Prix par heure (€) *</label>
+            <label htmlFor="place-price" className={labelClass}>Prix par heure (€) *</label>
             <input
+              id="place-price"
               type="number"
               min={0}
               step="0.01"
