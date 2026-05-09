@@ -7,8 +7,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRole } from "@/hooks/useRole";
 import { cn } from "@/lib/utils";
 import { Menu, X, Globe } from "lucide-react";
+import { Role } from "@/types/user";
 
-const NAV_LINKS = [
+const NAV_LINKS: { href: string; label: string; roles: Role[] }[] = [
   { href: "/places",       label: "Espaces",           roles: ["USER", "OWNER", "ADMIN", "SUPER_ADMIN"] },
   { href: "/places/new",   label: "Ajouter un espace", roles: ["USER", "OWNER", "ADMIN", "SUPER_ADMIN"] },
   { href: "/owner/places", label: "Mes espaces",        roles: ["OWNER", "ADMIN", "SUPER_ADMIN"] },
@@ -26,7 +27,7 @@ export function Navbar() {
   const accountRef = useRef<HTMLDivElement>(null);
 
   const visibleLinks = NAV_LINKS.filter((l) =>
-    l.roles.some((r) => roles.includes(r as never))
+    l.roles.some((r) => roles.includes(r))
   );
 
   useEffect(() => {

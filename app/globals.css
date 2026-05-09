@@ -45,6 +45,7 @@
   --color-hairline: var(--hairline);
   --color-hairline-soft: var(--hairline-soft);
   --color-border-strong: var(--border-strong);
+  --color-muted-soft: var(--muted-soft);
   /* Radius */
   --radius-sm: calc(var(--radius) * 0.75);
   --radius-md: calc(var(--radius) * 1.75);
