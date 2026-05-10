@@ -32,16 +32,16 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string }> = {
 function Skeleton() {
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-12 animate-pulse">
-      <div className="h-4 w-20 bg-muted rounded-md" />
-      <div className="h-72 rounded-2xl bg-muted" />
+      <div className="h-4 w-20 bg-[#f2f2f2] rounded-md" />
+      <div className="h-72 rounded-[14px] bg-[#f2f2f2]" />
       <div className="grid lg:grid-cols-[1fr_320px] gap-8">
         <div className="space-y-4">
-          <div className="h-7 w-2/3 bg-muted rounded-md" />
-          <div className="h-4 w-full bg-muted rounded-md" />
-          <div className="h-4 w-4/5 bg-muted rounded-md" />
-          <div className="h-4 w-1/2 bg-muted rounded-md" />
+          <div className="h-7 w-2/3 bg-[#f2f2f2] rounded-md" />
+          <div className="h-4 w-full bg-[#f2f2f2] rounded-md" />
+          <div className="h-4 w-4/5 bg-[#f2f2f2] rounded-md" />
+          <div className="h-4 w-1/2 bg-[#f2f2f2] rounded-md" />
         </div>
-        <div className="h-56 bg-muted rounded-2xl" />
+        <div className="h-56 bg-[#f2f2f2] rounded-[14px]" />
       </div>
     </div>
   );
@@ -57,8 +57,8 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
   if (error || !place) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center">
-          <Building2 className="w-6 h-6 text-muted-foreground" strokeWidth={1.5} />
+        <div className="w-14 h-14 rounded-[14px] bg-[#f2f2f2] flex items-center justify-center">
+          <Building2 className="w-6 h-6 text-[#6a6a6a]" strokeWidth={1.5} />
         </div>
         <div>
           <p className="font-semibold text-foreground">Espace introuvable</p>
