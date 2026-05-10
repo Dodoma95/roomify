@@ -1,4 +1,5 @@
-// lib/hooks/useToast.ts
+"use client";
+
 import { useToastStore } from "@/store/toastStore";
 
 export function useToast() {

@@ -3,7 +3,7 @@
 
 import { AnimatePresence } from "framer-motion";
 import { useToastStore } from "@/store/toastStore";
-import { ToastItem } from "./Toast";
+import { ToastCard } from "./Toast";
 
 export function ToastContainer() {
   const toasts = useToastStore((s) => s.toasts);
@@ -15,7 +15,7 @@ export function ToastContainer() {
     >
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => (
-          <ToastItem key={toast.id} toast={toast} />
+          <ToastCard key={toast.id} toast={toast} />
         ))}
       </AnimatePresence>
     </div>

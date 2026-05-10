@@ -3,14 +3,14 @@ import { create } from "zustand";
 
 export type ToastType = "success" | "error";
 
-export interface Toast {
+export interface ToastItem {
   id: string;
   type: ToastType;
   message: string;
 }
 
 interface ToastState {
-  toasts: Toast[];
+  toasts: ToastItem[];
   addToast: (type: ToastType, message: string) => void;
   removeToast: (id: string) => void;
 }

@@ -4,16 +4,16 @@
 import { useEffect } from "react";
 import { X, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { Toast as ToastType, ToastType as ToastKind, useToastStore } from "@/store/toastStore";
+import { ToastItem, ToastType, useToastStore } from "@/store/toastStore";
 
 const SUCCESS_DURATION = 4000;
 
-const CONFIG: Record<ToastKind, { Icon: typeof CheckCircle2; color: string; bar: string }> = {
+const CONFIG: Record<ToastType, { Icon: typeof CheckCircle2; color: string; bar: string }> = {
   success: { Icon: CheckCircle2, color: "#008A05", bar: "#008A05" },
   error:   { Icon: AlertCircle,  color: "#c13515", bar: "#c13515" },
 };
 
-export function ToastItem({ toast }: { toast: ToastType }) {
+export function ToastCard({ toast }: { toast: ToastItem }) {
   const removeToast = useToastStore((s) => s.removeToast);
   const { Icon, color, bar } = CONFIG[toast.type];
 
