@@ -178,7 +178,7 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
 
         {/* ── Right: booking card ── */}
         <div className="sticky top-20">
-          <div className="rounded-2xl border border-border bg-card p-6 space-y-5 shadow-sm">
+          <div className="rounded-[14px] border border-[#dddddd] bg-white p-6 space-y-5 shadow-tier">
             {place.pricePerHour != null && (
               <p className="text-3xl font-bold text-foreground">
                 {place.pricePerHour} €
@@ -186,7 +186,7 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
               </p>
             )}
 
-            <div className="border-t border-border" />
+            <div className="border-t border-[#dddddd]" />
 
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between">
