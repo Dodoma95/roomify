@@ -120,9 +120,9 @@ function UnavailabilityPanel({ placeId }: { placeId: string }) {
   }
 
   return (
-    <div className="border-t border-border mt-4 pt-4 space-y-4">
+    <div className="border-t border-[#dddddd] mt-4 pt-4 space-y-4">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-[#6a6a6a]">
           Périodes bloquées
         </p>
 
@@ -135,7 +135,7 @@ function UnavailabilityPanel({ placeId }: { placeId: string }) {
         {periods.map((p) => (
           <div
             key={p.id}
-            className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-2"
+            className="flex items-center justify-between rounded-[8px] bg-[#f7f7f7] px-3 py-2"
           >
             <div className="flex items-center gap-2 text-sm">
               <CalendarRange className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
@@ -143,10 +143,10 @@ function UnavailabilityPanel({ placeId }: { placeId: string }) {
               <span className="text-muted-foreground">→</span>
               <span className="text-foreground">{fmtDate(p.endDate)}</span>
               <span className={cn(
-                "ml-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full border",
+                "ml-1 text-[11px] font-semibold px-1.5 py-0.5 rounded-full border",
                 p.reason === "OWNER_BLOCKED"
-                  ? "bg-primary/10 text-primary border-primary/20"
-                  : "bg-sky-50 text-sky-700 border-sky-200"
+                  ? "bg-[#f2f2f2] text-[#3f3f3f] border-[#dddddd]"
+                  : "bg-[#f7f7f7] text-[#6a6a6a] border-[#dddddd]"
               )}>
                 {p.reason === "OWNER_BLOCKED" ? "Manuel" : "Réservation"}
               </span>
@@ -167,7 +167,7 @@ function UnavailabilityPanel({ placeId }: { placeId: string }) {
       </div>
 
       <form onSubmit={handleBlock} className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-[#6a6a6a]">
           Bloquer une période
         </p>
         <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-end">
@@ -196,7 +196,7 @@ function UnavailabilityPanel({ placeId }: { placeId: string }) {
             type="submit"
             size="sm"
             disabled={!from || !to || blocking}
-            className="h-9 gap-1.5 cursor-pointer shrink-0"
+            className="h-9 rounded-full gap-1.5 cursor-pointer shrink-0"
           >
             <CalendarOff className="w-3.5 h-3.5" />
             {blocking ? "Blocage…" : "Bloquer"}
