@@ -36,21 +36,25 @@ export function LoginForm() {
     setErrors({});
     setLoading(true);
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    setLoading(false);
+      if (!res.ok) {
+        toast.error("Email ou mot de passe incorrect.");
+        return;
+      }
 
-    if (!res.ok) {
-      toast.error("Email ou mot de passe incorrect.");
-      return;
+      router.push("/places");
+      router.refresh();
+    } catch {
+      toast.error("Impossible de contacter le serveur.");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/places");
-    router.refresh();
   }
 
   return (
