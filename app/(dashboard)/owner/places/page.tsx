@@ -452,7 +452,7 @@ export default function OwnerPlacesPage() {
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-foreground leading-snug">{place.name}</p>
+                    <p className="text-[16px] font-semibold text-[#222222] leading-snug">{place.name}</p>
                     <span className={cn(
                       "text-[11px] font-semibold px-2.5 py-0.5 rounded-full border",
                       statusCfg.className
@@ -460,13 +460,13 @@ export default function OwnerPlacesPage() {
                       {statusCfg.label}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="text-[14px] text-[#6a6a6a] mt-0.5">
                     {typeCfg.label}
                     {place.pricePerHour != null && ` · ${place.pricePerHour} €/h`}
                     {place.capacity != null && ` · ${place.capacity} pers.`}
                   </p>
                   {place.address && (
-                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{place.address}</p>
+                    <p className="text-[14px] text-[#6a6a6a] mt-0.5 truncate">{place.address}</p>
                   )}
                 </div>
 
