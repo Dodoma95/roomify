@@ -395,7 +395,7 @@ export default function OwnerPlacesPage() {
         </div>
         <Button
           size="sm"
-          className="gap-1.5 cursor-pointer shrink-0"
+          className="rounded-full gap-1.5 cursor-pointer shrink-0"
           render={<Link href="/places/new" />}
         >
           <Plus className="w-3.5 h-3.5" />
@@ -406,21 +406,21 @@ export default function OwnerPlacesPage() {
       {isLoading && (
         <div className="grid gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 rounded-2xl border border-border bg-muted animate-pulse" />
+            <div key={i} className="h-[72px] rounded-[14px] bg-[#f2f2f2] animate-pulse" />
           ))}
         </div>
       )}
 
       {!isLoading && places.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card py-16 text-center space-y-4">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Building2 className="w-6 h-6 text-primary" strokeWidth={1.5} />
+        <div className="flex flex-col items-center justify-center rounded-[14px] bg-[#f7f7f7] py-16 text-center space-y-4">
+          <div className="w-12 h-12 rounded-[14px] bg-[#f2f2f2] flex items-center justify-center">
+            <Building2 className="w-6 h-6 text-[#6a6a6a]" strokeWidth={1.5} />
           </div>
           <div>
             <p className="font-semibold text-foreground">Aucun espace pour l&apos;instant</p>
             <p className="text-sm text-muted-foreground mt-1">Créez votre premier espace pour commencer.</p>
           </div>
-          <Button size="sm" className="gap-1.5 cursor-pointer" render={<Link href="/places/new" />}>
+          <Button size="sm" className="rounded-full gap-1.5 cursor-pointer" render={<Link href="/places/new" />}>
             <Plus className="w-3.5 h-3.5" />
             Ajouter un espace
           </Button>
@@ -441,7 +441,7 @@ export default function OwnerPlacesPage() {
           return (
             <div
               key={place.id}
-              className="rounded-2xl border border-border bg-card p-5 transition-shadow duration-200 hover:shadow-sm"
+              className="rounded-[14px] bg-white p-5 transition-shadow duration-200 hover:shadow-tier"
             >
               <div className="flex items-start gap-4">
                 {/* Icon */}
