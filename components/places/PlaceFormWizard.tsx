@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/useToast";
 import { Place, CreatePlaceInput } from "@/types/place";
 import { StepType } from "./wizard/StepType";
 import { StepInfo } from "./wizard/StepInfo";
@@ -37,8 +37,8 @@ export function PlaceFormWizard({
     pricePerHour: defaultValues?.pricePerHour ?? 0,
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [submitError, setSubmitError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   function validateStep(s: Step): FormErrors {
     const errs: FormErrors = {};
@@ -72,7 +72,6 @@ export function PlaceFormWizard({
   }
 
   async function handleSubmit() {
-    setSubmitError(null);
     setLoading(true);
 
     const url    = placeId ? `/api/places/${placeId}` : "/api/places";
@@ -87,14 +86,15 @@ export function PlaceFormWizard({
 
       if (!res.ok) {
         const json = await res.json().catch(() => ({}));
-        setSubmitError(json.error ?? json.message ?? "Une erreur est survenue.");
+        toast.error(json.error ?? json.message ?? "Une erreur est survenue.");
         return;
       }
 
+      toast.success(placeId ? "Espace mis à jour !" : "Espace publié !");
       router.push(backHref ?? "/places");
       router.refresh();
     } catch {
-      setSubmitError("Impossible de contacter le serveur.");
+      toast.error("Impossible de contacter le serveur.");
     } finally {
       setLoading(false);
     }
@@ -179,14 +179,6 @@ export function PlaceFormWizard({
           />
         )}
       </div>
-
-      {/* Erreur de soumission */}
-      {submitError && (
-        <div className="flex items-start gap-2.5 rounded-xl border border-[#c13515]/30 bg-[#c13515]/5 px-4 py-3 text-sm text-[#c13515] mt-6">
-          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-          {submitError}
-        </div>
-      )}
 
       {/* Navigation */}
       <div className="flex items-center justify-between mt-8">
