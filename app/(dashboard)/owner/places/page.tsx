@@ -406,7 +406,7 @@ export default function OwnerPlacesPage() {
       {isLoading && (
         <div className="grid gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-[72px] rounded-[14px] bg-[#f2f2f2] animate-pulse" />
+            <div key={i} className="h-[88px] rounded-[14px] bg-[#f2f2f2] animate-pulse" />
           ))}
         </div>
       )}
@@ -441,7 +441,7 @@ export default function OwnerPlacesPage() {
           return (
             <div
               key={place.id}
-              className="rounded-[14px] bg-white p-5 transition-shadow duration-200 hover:shadow-tier"
+              className="rounded-[14px] bg-white border border-[#ebebeb] p-5 transition-shadow duration-200 hover:shadow-tier"
             >
               <div className="flex items-start gap-4">
                 {/* Icon */}
