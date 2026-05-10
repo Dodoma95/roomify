@@ -12,6 +12,8 @@ export function ToastContainer() {
     <div
       className="fixed top-4 right-4 z-[200] flex flex-col gap-2"
       aria-label="Notifications"
+      aria-live="polite"
+      aria-atomic="false"
     >
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => (

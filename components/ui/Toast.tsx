@@ -35,8 +35,7 @@ export function ToastCard({ toast }: { toast: ToastItem }) {
         boxShadow:
           "rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px 0, rgba(0,0,0,0.1) 0 4px 8px 0",
       }}
-      role="alert"
-      aria-live="assertive"
+      role="status"
     >
       <div className="flex items-start gap-3 px-4 py-3">
         <Icon className="w-5 h-5 shrink-0 mt-0.5" style={{ color }} />
