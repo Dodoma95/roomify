@@ -390,7 +390,7 @@ export default function OwnerPlacesPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Mes espaces</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Gérez vos espaces, leurs réservations et leurs périodes d'indisponibilité.
+            Gérez vos espaces, leurs réservations et leurs périodes d&apos;indisponibilité.
           </p>
         </div>
         <Button
@@ -417,7 +417,7 @@ export default function OwnerPlacesPage() {
             <Building2 className="w-6 h-6 text-primary" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="font-semibold text-foreground">Aucun espace pour l'instant</p>
+            <p className="font-semibold text-foreground">Aucun espace pour l&apos;instant</p>
             <p className="text-sm text-muted-foreground mt-1">Créez votre premier espace pour commencer.</p>
           </div>
           <Button size="sm" className="gap-1.5 cursor-pointer" render={<Link href="/places/new" />}>
