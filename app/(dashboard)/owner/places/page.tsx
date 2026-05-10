@@ -17,12 +17,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const TYPE_CONFIG: Record<PlaceType, { label: string; gradient: string; Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }> = {
-  MEETING_ROOM:    { label: "Salle de réunion", gradient: "from-teal-500 to-teal-700",     Icon: Building2 },
-  COWORKING_SPACE: { label: "Coworking",         gradient: "from-sky-500 to-sky-700",       Icon: Laptop },
-  EVENT_SPACE:     { label: "Événementiel",      gradient: "from-violet-500 to-violet-700", Icon: PartyPopper },
-  PARTY_ROOM:      { label: "Salle de fête",     gradient: "from-rose-500 to-rose-700",     Icon: Music2 },
-  STUDIO:          { label: "Studio",            gradient: "from-amber-500 to-amber-700",   Icon: Camera },
+const TYPE_CONFIG: Record<PlaceType, { label: string; Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }> = {
+  MEETING_ROOM:    { label: "Salle de réunion", Icon: Building2 },
+  COWORKING_SPACE: { label: "Coworking",        Icon: Laptop },
+  EVENT_SPACE:     { label: "Événementiel",     Icon: PartyPopper },
+  PARTY_ROOM:      { label: "Salle de fête",    Icon: Music2 },
+  STUDIO:          { label: "Studio",           Icon: Camera },
 };
 
 const STATUS_BADGE: Record<PlaceStatus, { label: string; className: string }> = {
@@ -445,11 +445,8 @@ export default function OwnerPlacesPage() {
             >
               <div className="flex items-start gap-4">
                 {/* Icon */}
-                <div className={cn(
-                  "w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br",
-                  typeCfg.gradient
-                )}>
-                  <Icon className="w-5 h-5 text-white" strokeWidth={1.5} />
+                <div className="w-10 h-10 rounded-[8px] flex items-center justify-center shrink-0 bg-[#f2f2f2]">
+                  <Icon className="w-5 h-5 text-[#3f3f3f]" strokeWidth={1.5} />
                 </div>
 
                 {/* Info */}
