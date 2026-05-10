@@ -477,10 +477,10 @@ export default function OwnerPlacesPage() {
                     type="button"
                     onClick={() => togglePanel(placeId, "bookings")}
                     className={cn(
-                      "flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-150 cursor-pointer",
+                      "flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded-full border transition-all duration-150 cursor-pointer",
                       bookingsExpanded
-                        ? "bg-primary/10 text-primary border-primary/20"
-                        : "border-border text-muted-foreground hover:text-foreground hover:border-primary/30"
+                        ? "bg-[#ff385c]/5 text-[#ff385c] border-[#ff385c]"
+                        : "border-[#dddddd] text-[#6a6a6a] hover:border-[#222222] hover:text-[#222222]"
                     )}
                   >
                     <BookOpen className="w-3.5 h-3.5" />
@@ -493,10 +493,10 @@ export default function OwnerPlacesPage() {
                     type="button"
                     onClick={() => togglePanel(placeId, "unavailability")}
                     className={cn(
-                      "flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-150 cursor-pointer",
+                      "flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded-full border transition-all duration-150 cursor-pointer",
                       unavailExpanded
-                        ? "bg-primary/10 text-primary border-primary/20"
-                        : "border-border text-muted-foreground hover:text-foreground hover:border-primary/30"
+                        ? "bg-[#ff385c]/5 text-[#ff385c] border-[#ff385c]"
+                        : "border-[#dddddd] text-[#6a6a6a] hover:border-[#222222] hover:text-[#222222]"
                     )}
                   >
                     <CalendarOff className="w-3.5 h-3.5" />
@@ -508,7 +508,7 @@ export default function OwnerPlacesPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="text-xs gap-1 cursor-pointer"
+                    className="rounded-full text-[13px] gap-1 cursor-pointer border-[#dddddd] text-[#222222] hover:border-[#222222]"
                     render={<Link href={`/owner/places/${placeId}/edit`} />}
                   >
                     <Pencil className="w-3.5 h-3.5" />
@@ -518,8 +518,13 @@ export default function OwnerPlacesPage() {
                   {/* Delete */}
                   <Button
                     size="sm"
-                    variant={isConfirm ? "destructive" : "outline"}
-                    className={cn("text-xs gap-1 cursor-pointer", !isConfirm && "text-destructive hover:text-destructive")}
+                    variant={isConfirm ? "destructive" : "ghost"}
+                    className={cn(
+                      "rounded-full text-[13px] gap-1 cursor-pointer",
+                      isConfirm
+                        ? "font-semibold"
+                        : "text-[#6a6a6a] hover:text-[#c13515] hover:bg-transparent"
+                    )}
                     disabled={deletingId === placeId}
                     onClick={() => handleDelete(placeId)}
                   >
@@ -529,7 +534,7 @@ export default function OwnerPlacesPage() {
                   {isConfirm && (
                     <button
                       type="button"
-                      className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                      className="text-[13px] text-[#6a6a6a] hover:text-[#222222] cursor-pointer"
                       onClick={() => setConfirmId(null)}
                     >
                       Annuler
