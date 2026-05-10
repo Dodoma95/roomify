@@ -26,9 +26,9 @@ const TYPE_CONFIG: Record<PlaceType, { label: string; Icon: React.ComponentType<
 };
 
 const STATUS_BADGE: Record<PlaceStatus, { label: string; className: string }> = {
-  APPROVED: { label: "Approuvé",   className: "bg-emerald-100 text-emerald-800 border-emerald-200" },
-  PENDING:  { label: "En attente", className: "bg-amber-100 text-amber-800 border-amber-200" },
-  REJECTED: { label: "Refusé",     className: "bg-red-100 text-red-800 border-red-200" },
+  APPROVED: { label: "Approuvé",   className: "bg-[#f7f7f7] text-[#222222] border-[#dddddd]" },
+  PENDING:  { label: "En attente", className: "bg-amber-500 text-white border-transparent" },
+  REJECTED: { label: "Refusé",     className: "bg-[#c13515] text-white border-transparent" },
 };
 
 const BOOKING_STATUS_CONFIG: Record<BookingStatus, { label: string; className: string; Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }> = {
@@ -454,7 +454,7 @@ export default function OwnerPlacesPage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold text-foreground leading-snug">{place.name}</p>
                     <span className={cn(
-                      "text-[10px] font-semibold px-2 py-0.5 rounded-full border",
+                      "text-[11px] font-semibold px-2.5 py-0.5 rounded-full border",
                       statusCfg.className
                     )}>
                       {statusCfg.label}
