@@ -4,7 +4,6 @@ import { useState } from "react";
 import useSWR from "swr";
 import { PlacesPage, PlaceStatus } from "@/types/place";
 import { useToast } from "@/hooks/useToast";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Trash2, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
