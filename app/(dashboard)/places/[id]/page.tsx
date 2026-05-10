@@ -114,7 +114,7 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
         <div className="space-y-7">
           {/* chips */}
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-sm font-medium px-3 py-1 rounded-lg bg-primary/8 text-primary">
+            <span className="rounded-full px-3 py-1 bg-[#f7f7f7] text-[#222222] border border-[#dddddd] text-[13px] font-medium">
               {type.label}
             </span>
             {place.capacity != null && (
@@ -133,14 +133,14 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
             </div>
           )}
 
-          <div className="border-t border-border" />
+          <div className="border-t border-[#dddddd]" />
 
           {/* Info tiles */}
           <div className="grid sm:grid-cols-2 gap-5">
             {place.address && (
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                <div className="w-10 h-10 rounded-[8px] bg-[#f2f2f2] flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 text-[#6a6a6a]" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">Adresse</p>
@@ -151,8 +151,8 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
 
             {place.pricePerHour != null && (
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
+                <div className="w-10 h-10 rounded-[8px] bg-[#f2f2f2] flex items-center justify-center shrink-0">
+                  <Clock className="w-4 h-4 text-[#6a6a6a]" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">Tarif</p>
@@ -163,8 +163,8 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
 
             {place.owner && (
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4 text-muted-foreground" />
+                <div className="w-10 h-10 rounded-[8px] bg-[#f2f2f2] flex items-center justify-center shrink-0">
+                  <User className="w-4 h-4 text-[#6a6a6a]" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">Propriétaire</p>
