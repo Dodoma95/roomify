@@ -32,10 +32,10 @@ const STATUS_BADGE: Record<PlaceStatus, { label: string; className: string }> = 
 };
 
 const BOOKING_STATUS_CONFIG: Record<BookingStatus, { label: string; className: string; Icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }> = {
-  PENDING:   { label: "En attente",  className: "bg-amber-50 text-amber-700 border-amber-200",   Icon: Clock },
-  CONFIRMED: { label: "Confirmée",   className: "bg-emerald-50 text-emerald-700 border-emerald-200", Icon: CheckCircle2 },
-  CANCELLED: { label: "Annulée",     className: "bg-red-50 text-red-600 border-red-200",          Icon: XCircle },
-  COMPLETED: { label: "Terminée",    className: "bg-sky-50 text-sky-700 border-sky-200",           Icon: CheckCircle2 },
+  PENDING:   { label: "En attente", className: "bg-amber-500 text-white border-transparent",         Icon: Clock },
+  CONFIRMED: { label: "Confirmée",  className: "bg-[#f7f7f7] text-[#222222] border-[#dddddd]",      Icon: CheckCircle2 },
+  CANCELLED: { label: "Annulée",    className: "bg-[#c13515] text-white border-transparent",         Icon: XCircle },
+  COMPLETED: { label: "Terminée",   className: "bg-[#f7f7f7] text-[#6a6a6a] border-[#dddddd]",     Icon: CheckCircle2 },
 };
 
 function todayStr() { return new Date().toISOString().slice(0, 10); }
@@ -240,8 +240,8 @@ function BookingsPanel({ placeId }: { placeId: string }) {
   }
 
   return (
-    <div className="border-t border-border mt-4 pt-4 space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+    <div className="border-t border-[#dddddd] mt-4 pt-4 space-y-3">
+      <p className="text-[12px] font-semibold uppercase tracking-wide text-[#6a6a6a]">
         Réservations
       </p>
 
@@ -260,7 +260,7 @@ function BookingsPanel({ placeId }: { placeId: string }) {
           return (
             <div
               key={b.id}
-              className="rounded-xl border border-border bg-muted/20 px-4 py-3 space-y-2"
+              className="rounded-[14px] bg-[#f7f7f7] px-4 py-3 space-y-2"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-0.5 min-w-0">
@@ -278,7 +278,7 @@ function BookingsPanel({ placeId }: { placeId: string }) {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className={cn(
-                    "flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border",
+                    "flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border",
                     cfg.className
                   )}>
                     <StatusIcon className="w-3 h-3" />
@@ -296,7 +296,7 @@ function BookingsPanel({ placeId }: { placeId: string }) {
                 <div className="flex items-center gap-2 pt-1">
                   <Button
                     size="sm"
-                    className="h-7 text-xs gap-1 cursor-pointer"
+                    className="h-7 rounded-full text-[13px] gap-1 cursor-pointer"
                     disabled={busy}
                     onClick={() => handleAction(b.id, "confirm")}
                   >
@@ -306,7 +306,7 @@ function BookingsPanel({ placeId }: { placeId: string }) {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-7 text-xs gap-1 cursor-pointer text-destructive hover:text-destructive"
+                    className="h-7 rounded-full text-[13px] gap-1 cursor-pointer border-[#dddddd] text-[#c13515] hover:text-[#c13515] hover:border-[#c13515]"
                     disabled={busy}
                     onClick={() => handleAction(b.id, "cancel")}
                   >
@@ -321,7 +321,7 @@ function BookingsPanel({ placeId }: { placeId: string }) {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-7 text-xs gap-1 cursor-pointer text-destructive hover:text-destructive"
+                    className="h-7 rounded-full text-[13px] gap-1 cursor-pointer border-[#dddddd] text-[#c13515] hover:text-[#c13515] hover:border-[#c13515]"
                     disabled={busy}
                     onClick={() => handleAction(b.id, "cancel")}
                   >
@@ -331,7 +331,7 @@ function BookingsPanel({ placeId }: { placeId: string }) {
                 </div>
               )}
 
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-[12px] text-[#6a6a6a]">
                 Créée le {fmtDateTime(b.createdAt)}
               </p>
             </div>
