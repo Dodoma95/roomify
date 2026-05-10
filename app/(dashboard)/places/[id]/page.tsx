@@ -88,17 +88,15 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
       </button>
 
       {/* Hero */}
-      <div className={cn("relative h-72 rounded-2xl overflow-hidden bg-gradient-to-br", type.gradient)}>
-        <div
-          className="absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage: "radial-gradient(circle, white 1.5px, transparent 1.5px)",
-            backgroundSize: "22px 22px",
-          }}
+      <div className="relative h-72 rounded-[14px] overflow-hidden bg-[#f7f7f7]">
+        <Image
+          src={`https://picsum.photos/seed/${buildImageSeed(place.type, place.id)}/1600/600`}
+          alt={place.name}
+          fill
+          sizes="(max-width: 1024px) 100vw, 1024px"
+          className="object-cover"
+          priority
         />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Icon className="w-28 h-28 text-white/15" strokeWidth={1} />
-        </div>
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/65 to-transparent pt-20 pb-6 px-7">
           <div className="flex items-end justify-between gap-4">
             <h1 className="text-3xl font-bold text-white leading-tight">{place.name}</h1>
