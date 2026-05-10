@@ -15,7 +15,7 @@
 | Action | Chemin |
 |--------|--------|
 | Create | `store/toastStore.ts` |
-| Create | `lib/hooks/useToast.ts` |
+| Create | `hooks/useToast.ts` |
 | Create | `components/ui/Toast.tsx` |
 | Create | `components/ui/ToastContainer.tsx` |
 | Modify | `app/layout.tsx` |
@@ -33,7 +33,7 @@
 
 **Files:**
 - Create: `store/toastStore.ts`
-- Create: `lib/hooks/useToast.ts`
+- Create: `hooks/useToast.ts`
 - Create: `components/ui/Toast.tsx`
 - Create: `components/ui/ToastContainer.tsx`
 
@@ -68,10 +68,10 @@ export const useToastStore = create<ToastState>((set) => ({
 }));
 ```
 
-- [ ] **Step 2: Créer `lib/hooks/useToast.ts`**
+- [ ] **Step 2: Créer `hooks/useToast.ts`**
 
 ```ts
-// lib/hooks/useToast.ts
+// hooks/useToast.ts
 import { useToastStore } from "@/store/toastStore";
 
 export function useToast() {
@@ -184,7 +184,7 @@ Attendu : aucune erreur
 - [ ] **Step 6: Commit**
 
 ```bash
-git add store/toastStore.ts lib/hooks/useToast.ts components/ui/Toast.tsx components/ui/ToastContainer.tsx
+git add store/toastStore.ts hooks/useToast.ts components/ui/Toast.tsx components/ui/ToastContainer.tsx
 git commit -m "feat: toast infrastructure — store Zustand, hook useToast, composants Toast/ToastContainer"
 ```
 
