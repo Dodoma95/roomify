@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/useToast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Loader2, MailCheck, Check, X } from "lucide-react";
@@ -16,7 +17,7 @@ const PASSWORD_RULES = [
 
 const NAME_PATTERN = /^[\p{L}]+([ '\-][\p{L}]+)*$/u;
 
-type FieldErrors = Partial<Record<"firstName" | "lastName" | "email" | "password" | "confirmPassword" | "general", string>>;
+type FieldErrors = Partial<Record<"firstName" | "lastName" | "email" | "password" | "confirmPassword", string>>;
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -25,6 +26,7 @@ function FieldError({ message }: { message?: string }) {
 
 export function RegisterForm() {
   const router = useRouter();
+  const toast = useToast();
   const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -89,7 +91,7 @@ export function RegisterForm() {
 
     if (!res.ok) {
       const json = await res.json().catch(() => ({}));
-      setErrors({ general: json.message ?? "Erreur lors de l'inscription" });
+      toast.error(json.error ?? json.message ?? "Erreur lors de l'inscription.");
       return;
     }
 
@@ -246,13 +248,6 @@ export function RegisterForm() {
         </div>
         <FieldError message={errors.confirmPassword} />
       </div>
-
-      {/* Erreur API générale */}
-      {errors.general && (
-        <p className="text-xs text-destructive bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-2.5">
-          {errors.general}
-        </p>
-      )}
 
       <button
         type="submit"

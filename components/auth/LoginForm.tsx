@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/useToast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
@@ -15,6 +16,7 @@ function FieldError({ message }: { message?: string }) {
 
 export function LoginForm() {
   const router = useRouter();
+  const toast = useToast();
   const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +45,7 @@ export function LoginForm() {
     setLoading(false);
 
     if (!res.ok) {
-      setErrors({ password: "Email ou mot de passe incorrect" });
+      toast.error("Email ou mot de passe incorrect.");
       return;
     }
 
