@@ -2,14 +2,22 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { BookingResponse, BookingStatus } from "@/types/booking";
+import { BookingGraphQLResponse, BookingPage, BookingStatus } from "@/types/booking";
 import { useToast } from "@/hooks/useToast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Search, Info, CheckCircle2, XCircle, CalendarCheck } from "lucide-react";
+import { Search, CheckCircle2, XCircle, CalendarCheck, ChevronLeft, ChevronRight } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+const STATUS_TABS: { label: string; value: BookingStatus | null }[] = [
+  { label: "Tous",       value: null },
+  { label: "En attente", value: "PENDING" },
+  { label: "Confirmées", value: "CONFIRMED" },
+  { label: "Annulées",   value: "CANCELLED" },
+  { label: "Terminées",  value: "COMPLETED" },
+];
 
 const STATUS_BADGES: Record<BookingStatus, { label: string; className: string }> = {
   PENDING:   { label: "En attente",  className: "bg-amber-100 text-amber-800 border-amber-200" },
@@ -18,33 +26,61 @@ const STATUS_BADGES: Record<BookingStatus, { label: string; className: string }>
   COMPLETED: { label: "Terminée",    className: "bg-sky-100 text-sky-800 border-sky-200" },
 };
 
-function useBookings(placeId: string | null) {
-  const { data, error, isLoading, mutate } = useSWR<BookingResponse[]>(
-    placeId ? `/api/admin/bookings?placeId=${placeId}` : null,
-    fetcher
-  );
-  return { data, error, isLoading, mutate };
+const TYPE_LABELS: Record<string, string> = {
+  MEETING_ROOM:    "Réunion",
+  COWORKING_SPACE: "Coworking",
+  EVENT_SPACE:     "Événement",
+  PARTY_ROOM:      "Fête",
+  STUDIO:          "Studio",
+};
+
+const PAGE_SIZE = 20;
+
+function useAdminBookings(
+  status: BookingStatus | null,
+  placeName: string,
+  userEmail: string,
+  page: number
+) {
+  const params = new URLSearchParams();
+  if (status) params.set("status", status);
+  if (placeName) params.set("placeName", placeName);
+  if (userEmail) params.set("userEmail", userEmail);
+  params.set("page", String(page));
+  params.set("size", String(PAGE_SIZE));
+  return useSWR<BookingPage>(`/api/admin/bookings?${params.toString()}`, fetcher);
 }
 
 export default function AdminBookingsPage() {
-  const [inputValue, setInputValue] = useState("");
-  const [searchedId, setSearchedId] = useState<string | null>(null);
+  const [activeStatus, setActiveStatus] = useState<BookingStatus | null>(null);
+  const [placeInput, setPlaceInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
+  const [activePlaceName, setActivePlaceName] = useState("");
+  const [activeEmail, setActiveEmail] = useState("");
+  const [page, setPage] = useState(0);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const toast = useToast();
 
-  const { data, error, isLoading, mutate } = useBookings(searchedId);
-  const bookings: BookingResponse[] = Array.isArray(data) ? data : [];
+  const { data, error, isLoading, mutate } = useAdminBookings(activeStatus, activePlaceName, activeEmail, page);
+  const bookings: BookingGraphQLResponse[] = data?.results ?? [];
+  const pageInfo = data?.pageInfo;
+
+  function handleTabChange(status: BookingStatus | null) {
+    setActiveStatus(status);
+    setPage(0);
+  }
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = inputValue.trim();
-    if (trimmed) setSearchedId(trimmed);
+    setActivePlaceName(placeInput.trim());
+    setActiveEmail(emailInput.trim());
+    setPage(0);
   }
 
   async function handleAction(id: string, action: "confirm" | "cancel") {
     setActionLoading(`${id}-${action}`);
     try {
-      const res = await fetch(`/api/admin/bookings/${id}/${action}`, { method: "POST" });
+      const res = await fetch(`/api/admin/bookings/${id}/${action}`, { method: "PATCH" });
       if (!res.ok) {
         toast.error("Une erreur est survenue.");
       } else {
@@ -61,128 +97,199 @@ export default function AdminBookingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Gestion des réservations</h1>
-        <p className="text-sm text-muted-foreground mt-1">Confirmez ou annulez les réservations par espace.</p>
+        <h1 className="text-2xl font-bold text-[#222222] dark:text-[#f0f0f0]">Gestion des réservations</h1>
+        <p className="text-sm text-[#6a6a6a] mt-1">Consultez, confirmez ou annulez les réservations.</p>
       </div>
 
-      <div className="flex items-start gap-2 rounded-lg border border-sky-200 bg-sky-50 dark:bg-sky-950/30 dark:border-sky-800 px-4 py-3 text-sm text-sky-800 dark:text-sky-200">
-        <Info className="w-4 h-4 shrink-0 mt-0.5" />
-        <span>
-          La recherche globale des réservations n'est pas disponible. Entrez l'ID d'un espace pour voir ses réservations.
-        </span>
+      <div className="inline-flex rounded-[8px] border border-[#dddddd] p-1 bg-[#f2f2f2] gap-1 dark:bg-[#2a2a2a] dark:border-[#3a3a3a]">
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={tab.label}
+            onClick={() => handleTabChange(tab.value)}
+            className={cn(
+              "px-4 py-1.5 rounded-[6px] text-sm font-medium transition-colors duration-150",
+              activeStatus === tab.value
+                ? "bg-white shadow-sm text-[#222222] dark:bg-[#3a3a3a] dark:text-[#f0f0f0]"
+                : "text-[#6a6a6a] hover:text-[#222222] dark:hover:text-[#f0f0f0]"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      <form onSubmit={handleSearch} className="flex items-center gap-3 max-w-md">
+      <form onSubmit={handleSearch} className="flex flex-wrap items-center gap-2">
         <Input
-          placeholder="ID de l'espace…"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          className="flex-1"
+          placeholder="Nom de l'espace…"
+          value={placeInput}
+          onChange={(e) => setPlaceInput(e.target.value)}
+          className="w-48"
         />
-        <Button type="submit" className="gap-1.5 shrink-0">
+        <Input
+          placeholder="Email du locataire…"
+          value={emailInput}
+          onChange={(e) => setEmailInput(e.target.value)}
+          className="w-52"
+        />
+        <Button type="submit" variant="outline" className="gap-1.5 shrink-0">
           <Search className="w-4 h-4" />
-          Rechercher
+          Filtrer
         </Button>
+        {(activePlaceName || activeEmail) && (
+          <button
+            type="button"
+            onClick={() => {
+              setPlaceInput(""); setEmailInput("");
+              setActivePlaceName(""); setActiveEmail("");
+              setPage(0);
+            }}
+            className="text-xs text-[#6a6a6a] hover:text-[#222222] dark:hover:text-[#f0f0f0]"
+          >
+            Réinitialiser
+          </button>
+        )}
       </form>
 
-      {!searchedId && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-muted/30 py-16 px-8 text-center space-y-3">
-          <CalendarCheck className="w-8 h-8 text-muted-foreground" />
-          <p className="text-muted-foreground text-sm">Entrez un ID d'espace pour charger ses réservations.</p>
-        </div>
+      {error && (
+        <p className="text-destructive text-sm">Erreur : impossible de charger les réservations.</p>
       )}
 
-      {searchedId && isLoading && (
-        <div className="flex items-center justify-center py-12 text-muted-foreground">Chargement…</div>
-      )}
-
-      {searchedId && error && (
-        <p className="text-destructive text-sm">Erreur : {error?.error ?? "Impossible de charger les réservations."}</p>
-      )}
-
-      {searchedId && !isLoading && !error && bookings.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-muted/30 py-12 px-8 text-center space-y-2">
-          <CalendarCheck className="w-7 h-7 text-muted-foreground" />
-          <p className="text-muted-foreground text-sm">Aucune réservation pour cet espace.</p>
-        </div>
-      )}
-
-      {searchedId && !isLoading && bookings.length > 0 && (
-        <div className="rounded-xl border border-border overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-muted-foreground">
+      <div className="rounded-[14px] border border-[#dddddd] overflow-hidden dark:border-[#3a3a3a]">
+        <table className="w-full text-sm">
+          <thead className="bg-[#f2f2f2] text-[#6a6a6a] dark:bg-[#2a2a2a]">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium">Espace</th>
+              <th className="px-4 py-3 text-left font-medium">Locataire</th>
+              <th className="px-4 py-3 text-left font-medium">Propriétaire</th>
+              <th className="px-4 py-3 text-left font-medium">Dates</th>
+              <th className="px-4 py-3 text-left font-medium">Statut</th>
+              <th className="px-4 py-3 text-left font-medium">Prix</th>
+              <th className="px-4 py-3 text-left font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading && (
               <tr>
-                <th className="px-4 py-3 text-left font-medium">Espace</th>
-                <th className="px-4 py-3 text-left font-medium">Locataire</th>
-                <th className="px-4 py-3 text-left font-medium">Dates</th>
-                <th className="px-4 py-3 text-left font-medium">Statut</th>
-                <th className="px-4 py-3 text-left font-medium">Prix total</th>
-                <th className="px-4 py-3 text-left font-medium">Actions</th>
+                <td colSpan={7} className="px-4 py-8 text-center text-[#6a6a6a]">
+                  Chargement…
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {bookings.map((booking) => {
-                const statusCfg = STATUS_BADGES[booking.status];
-                return (
-                  <tr key={booking.id} className="border-t border-border hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3 font-medium text-foreground">{booking.placeName}</td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {booking.userFirstName} {booking.userLastName}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                      {new Date(booking.startDate).toLocaleDateString("fr-FR")}
-                      {" — "}
-                      {new Date(booking.endDate).toLocaleDateString("fr-FR")}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={cn(
-                          "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border",
-                          statusCfg.className
-                        )}
+            )}
+            {!isLoading && bookings.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-4 py-12 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <CalendarCheck className="w-7 h-7 text-[#6a6a6a]" />
+                    <p className="text-[#6a6a6a] text-sm">Aucune réservation trouvée.</p>
+                  </div>
+                </td>
+              </tr>
+            )}
+            {bookings.map((booking) => {
+              const statusCfg = STATUS_BADGES[booking.status];
+              return (
+                <tr
+                  key={booking.id}
+                  className="border-t border-[#dddddd] hover:bg-[#f7f7f7] dark:border-[#3a3a3a] dark:hover:bg-[#2a2a2a] transition-colors"
+                >
+                  <td className="px-4 py-3">
+                    <p className="font-medium text-[#222222] dark:text-[#f0f0f0]">{booking.place.name}</p>
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-[#f2f2f2] text-[#6a6a6a] dark:bg-[#3a3a3a] mt-0.5">
+                      {TYPE_LABELS[booking.place.type] ?? booking.place.type}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <p className="text-[#222222] dark:text-[#f0f0f0]">
+                      {booking.booker.firstName} {booking.booker.lastName}
+                    </p>
+                    <p className="text-xs text-[#929292]">{booking.booker.email}</p>
+                  </td>
+                  <td className="px-4 py-3 text-[#6a6a6a] whitespace-nowrap">
+                    {booking.place.owner.firstName} {booking.place.owner.lastName}
+                  </td>
+                  <td className="px-4 py-3 text-[#6a6a6a] whitespace-nowrap">
+                    {new Date(booking.startDate).toLocaleDateString("fr-FR")}
+                    {" — "}
+                    {new Date(booking.endDate).toLocaleDateString("fr-FR")}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={cn(
+                        "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border",
+                        statusCfg.className
+                      )}
+                    >
+                      {statusCfg.label}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-[#6a6a6a] whitespace-nowrap">
+                    {booking.totalPrice != null ? `${booking.totalPrice} €` : "—"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs gap-1 text-emerald-700 hover:text-emerald-700 border-emerald-200 hover:border-emerald-300 hover:bg-emerald-50"
+                        disabled={
+                          booking.status !== "PENDING" ||
+                          actionLoading === `${booking.id}-confirm`
+                        }
+                        onClick={() => handleAction(booking.id, "confirm")}
                       >
-                        {statusCfg.label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {booking.totalPrice != null ? `${booking.totalPrice} €` : "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-xs gap-1 text-emerald-700 hover:text-emerald-700 border-emerald-200 hover:border-emerald-300 hover:bg-emerald-50"
-                          disabled={
-                            booking.status !== "PENDING" ||
-                            actionLoading === `${booking.id}-confirm`
-                          }
-                          onClick={() => handleAction(booking.id, "confirm")}
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          Confirmer
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-xs gap-1 text-destructive hover:text-destructive border-red-200 hover:border-red-300 hover:bg-red-50"
-                          disabled={
-                            booking.status === "CANCELLED" ||
-                            booking.status === "COMPLETED" ||
-                            actionLoading === `${booking.id}-cancel`
-                          }
-                          onClick={() => handleAction(booking.id, "cancel")}
-                        >
-                          <XCircle className="w-3.5 h-3.5" />
-                          Annuler
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        Confirmer
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs gap-1 text-destructive hover:text-destructive border-red-200 hover:border-red-300 hover:bg-red-50"
+                        disabled={
+                          booking.status === "CANCELLED" ||
+                          booking.status === "COMPLETED" ||
+                          actionLoading === `${booking.id}-cancel`
+                        }
+                        onClick={() => handleAction(booking.id, "cancel")}
+                      >
+                        <XCircle className="w-3.5 h-3.5" />
+                        Annuler
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {pageInfo && pageInfo.totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-[#6a6a6a]">
+          <span>
+            Page {pageInfo.page + 1} sur {pageInfo.totalPages} ({pageInfo.totalElements} réservations)
+          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!pageInfo.hasPrevious}
+              onClick={() => setPage((p) => p - 1)}
+              className="gap-1"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Précédent
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!pageInfo.hasNext}
+              onClick={() => setPage((p) => p + 1)}
+              className="gap-1"
+            >
+              Suivant
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       )}
     </div>

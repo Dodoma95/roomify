@@ -49,10 +49,10 @@ export function PlaceCard({ place }: { place: Place }) {
           </span>
         </div>
 
-        {/* Status badge — top center (PENDING / REJECTED only) */}
+        {/* Status badge — bottom left (PENDING / REJECTED only) */}
         {statusBadge && (
           <div className={cn(
-            "absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[11px] font-semibold",
+            "absolute bottom-3 left-3 px-3 py-1 rounded-full text-[11px] font-semibold",
             statusBadge.className
           )}>
             {statusBadge.label}

@@ -91,7 +91,7 @@ export function PlaceFormWizard({
       }
 
       toast.success(placeId ? "Espace mis à jour !" : "Espace publié !");
-      router.push(backHref ?? "/places");
+      router.push(backHref ?? "/owner/places");
       router.refresh();
     } catch {
       toast.error("Impossible de contacter le serveur.");

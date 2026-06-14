@@ -1,0 +1,92 @@
+<h2>Comment fonctionne l'édition du profil ?</h2>
+<p class="subtitle">Section "Mon profil" dans la sidebar — 3 comportements possibles</p>
+
+<div class="cards">
+
+  <!-- Option A: Always editable form -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:14px;font-family:sans-serif">
+      <div style="background:#fff;border:1px solid #eee;border-radius:8px;padding:12px">
+        <div style="font-size:9px;font-weight:700;color:#111;margin-bottom:8px">Mon profil</div>
+        <div style="margin-bottom:6px">
+          <div style="font-size:7px;color:#888;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px">Prénom</div>
+          <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:9px;color:#111">Dorian</div>
+        </div>
+        <div style="margin-bottom:6px">
+          <div style="font-size:7px;color:#888;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px">Nom</div>
+          <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:9px;color:#111">Admin</div>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:7px;color:#888;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px">Email</div>
+          <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:4px;padding:4px 6px;font-size:9px;color:#111">super.admin@gmail.com</div>
+        </div>
+        <div style="background:#111;border-radius:4px;padding:5px;text-align:center;font-size:8px;color:#fff">Enregistrer</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Formulaire toujours visible</h3>
+      <p>Les champs sont toujours en mode édition. Simple, direct. L'utilisateur modifie et clique "Enregistrer".</p>
+    </div>
+  </div>
+
+  <!-- Option B: Display then click Edit button -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:14px;font-family:sans-serif">
+      <div style="background:#fff;border:1px solid #eee;border-radius:8px;padding:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:9px;font-weight:700;color:#111">Mon profil</div>
+          <div style="border:1px solid #ddd;border-radius:4px;padding:2px 7px;font-size:7px;color:#555;cursor:pointer">✏️ Modifier</div>
+        </div>
+        <!-- Display mode -->
+        <div style="margin-bottom:5px;display:flex;justify-content:space-between">
+          <div style="font-size:7px;color:#888">Prénom</div>
+          <div style="font-size:8px;color:#111;font-weight:600">Dorian</div>
+        </div>
+        <div style="margin-bottom:5px;display:flex;justify-content:space-between">
+          <div style="font-size:7px;color:#888">Nom</div>
+          <div style="font-size:8px;color:#111;font-weight:600">Admin</div>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <div style="font-size:7px;color:#888">Email</div>
+          <div style="font-size:8px;color:#111;font-weight:600">super.admin@…</div>
+        </div>
+        <div style="margin-top:8px;border-top:1px dashed #eee;padding-top:6px;font-size:7px;color:#bbb;text-align:center;font-style:italic">→ clic "Modifier" pour éditer</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Affichage + bouton Modifier</h3>
+      <p>Les infos s'affichent en lecture. Un bouton "Modifier" bascule en mode formulaire. Plus propre visuellement, mais 1 clic supplémentaire.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Inline field click to edit -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f8f8;padding:14px;font-family:sans-serif">
+      <div style="background:#fff;border:1px solid #eee;border-radius:8px;padding:12px">
+        <div style="font-size:9px;font-weight:700;color:#111;margin-bottom:8px">Mon profil</div>
+        <!-- Field 1: hovered/focused state -->
+        <div style="margin-bottom:6px">
+          <div style="font-size:7px;color:#888;margin-bottom:2px">Prénom</div>
+          <div style="border:1.5px solid #111;border-radius:4px;padding:4px 6px;font-size:9px;color:#111;background:#fff;display:flex;justify-content:space-between">
+            Dorian <span style="font-size:7px;color:#888">✓</span>
+          </div>
+        </div>
+        <!-- Field 2: display state -->
+        <div style="margin-bottom:6px">
+          <div style="font-size:7px;color:#888;margin-bottom:2px">Nom</div>
+          <div style="border:1px solid transparent;border-radius:4px;padding:4px 6px;font-size:9px;color:#111;background:#f8f8f8">Admin</div>
+        </div>
+        <div style="margin-bottom:6px">
+          <div style="font-size:7px;color:#888;margin-bottom:2px">Email</div>
+          <div style="border:1px solid transparent;border-radius:4px;padding:4px 6px;font-size:9px;color:#111;background:#f8f8f8">super.admin@gmail…</div>
+        </div>
+        <div style="font-size:7px;color:#bbb;text-align:center;font-style:italic">→ clic sur un champ pour l'éditer</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Click-to-edit par champ</h3>
+      <p>Chaque champ est cliquable individuellement. Modification inline, save au blur ou à la touche Entrée. Expérience fluide mais plus complexe à coder.</p>
+    </div>
+  </div>
+
+</div>

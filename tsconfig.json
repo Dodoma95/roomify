@@ -1,0 +1,84 @@
+{
+  // Options principales de TypeScript
+  "compilerOptions": {
+    // Niveau de JavaScript visé par TypeScript.
+    // Ici ES2017 = standard moderne, suffisant pour un projet Next.
+    "target": "ES2017",
+    // Bibliothèques de types disponibles globalement.
+    // - dom : APIs navigateur (window, document, etc.)
+    // - dom.iterable : collections DOM itérables
+    // - esnext : APIs JS modernes les plus récentes
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    // Autorise aussi les fichiers .js dans le projet.
+    // Pratique pour migration progressive ou coexistence JS/TS.
+    "allowJs": true,
+    // Ignore la vérification détaillée des types des dépendances externes.
+    // Accélère le check et évite du bruit venant de node_modules.
+    "skipLibCheck": true,
+    // Active le mode strict TypeScript.
+    // C’est l’option la plus importante pour avoir un typage robuste.
+    "strict": true,
+    // N’émet pas de fichiers JavaScript.
+    // Ici TypeScript sert surtout à vérifier les types ;
+    // c’est Next.js qui gère la compilation réelle.
+    "noEmit": true,
+    // Améliore la compatibilité entre imports ES Modules et CommonJS.
+    // Très fréquent dans les projets npm modernes.
+    "esModuleInterop": true,
+    // Utilise le système de modules ES moderne.
+    // Cohérent avec Next.js et le bundling moderne.
+    "module": "esnext",
+    // Résolution des imports pensée pour un bundler moderne.
+    // Recommandé dans les projets Next récents.
+    "moduleResolution": "bundler",
+    // Permet d’importer directement des fichiers JSON.
+    "resolveJsonModule": true,
+    // Force chaque fichier à pouvoir être compilé isolément.
+    // Important pour la toolchain moderne de Next / React.
+    "isolatedModules": true,
+    // Utilise le runtime JSX moderne de React.
+    "jsx": "react-jsx",
+    // Active la compilation incrémentale.
+    // C’est cette option qui génère le fichier `tsconfig.tsbuildinfo`.
+    "incremental": true,
+    // Plugin TypeScript spécifique à Next.js.
+    // Améliore l’intégration framework + l’expérience IDE.
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    // Alias de chemin :
+    // @/quelque-chose -> racine du projet /quelque-chose
+    // Ex: "@/components/ui/button"
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  // Fichiers inclus dans l’analyse TypeScript
+  "include": [
+    // Types générés par Next, nécessaires au projet
+    "next-env.d.ts",
+    // Tous les fichiers TypeScript
+    "**/*.ts",
+    // Tous les composants/pages React TypeScript
+    "**/*.tsx",
+    // Types générés par Next dans le build
+    ".next/types/**/*.ts",
+    // Types générés par Next en mode dev
+    ".next/dev/types/**/*.ts",
+    // Fichiers TypeScript au format module .mts
+    "**/*.mts"
+  ],
+  // Dossiers exclus de l’analyse
+  "exclude": [
+    // Dépendances installées
+    "node_modules"
+  ]
+}
