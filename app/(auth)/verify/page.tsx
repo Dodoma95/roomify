@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Mail, Loader2 } from "lucide-react";
 
 type State = "loading" | "no-token" | "success" | "error";
 
-export default function VerifyPage() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [state, setState] = useState<State>(token ? "loading" : "no-token");
@@ -49,6 +49,7 @@ export default function VerifyPage() {
 
   return (
     <div className="min-h-screen bg-[#f7f7f7] flex flex-col items-center justify-center px-4 py-16">
+
       <div className="w-full max-w-sm bg-white rounded-[14px] shadow-tier border border-[#dddddd] px-10 py-12 space-y-6 text-center">
         <span className="block text-[28px] font-bold text-[#ff385c] tracking-tight">Roomify</span>
 
@@ -134,5 +135,13 @@ export default function VerifyPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense>
+      <VerifyContent />
+    </Suspense>
   );
 }
