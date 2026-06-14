@@ -12,6 +12,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Roomify — La marketplace des espaces professionnels",
   description: "Trouvez et réservez des salles de réunion, espaces coworking, studios et espaces événementiels.",
+  icons: { icon: "/icon.svg" },
 };
 
 export default function RootLayout({
