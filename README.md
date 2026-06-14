@@ -58,8 +58,7 @@ npm install
 Créez un fichier `.env.local` à la racine :
 
 ```env
-API_BASE_URL=https://roomify-api-1ik6.onrender.com/api/v1
-GRAPHQL_URL=https://roomify-api-1ik6.onrender.com/graphql
+ROOMIFY_API_URL=https://roomify-api-1ik6.onrender.com
 SESSION_SECRET=<chaine-aleatoire-min-32-chars>
 ```
 

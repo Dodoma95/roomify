@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur lors de l'inscription";
-    return NextResponse.json({ message }, { status: 400 });
+    const status = (err as { status?: number }).status ?? 400;
+    return NextResponse.json({ message }, { status });
   }
 }

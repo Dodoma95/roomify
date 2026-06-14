@@ -15,11 +15,17 @@ export async function apiFetch<T>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers,
+    signal: init.signal ?? AbortSignal.timeout(90_000),
+  });
 
   if (!res.ok) {
     const error = await res.text().catch(() => res.statusText);
-    throw new Error(error || `API error ${res.status}`);
+    const apiError = new Error(error || `API error ${res.status}`) as Error & { status: number };
+    apiError.status = res.status;
+    throw apiError;
   }
 
   return await res.json() as Promise<T>;
@@ -42,6 +48,7 @@ export async function graphqlFetch<T>(
     method: "POST",
     headers,
     body: JSON.stringify({ query, variables }),
+    signal: AbortSignal.timeout(90_000),
   });
 
   if (!res.ok) {
