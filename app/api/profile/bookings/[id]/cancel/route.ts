@@ -6,10 +6,8 @@ export async function PATCH(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const user = await getSessionUser();
+  const [{ id }, user] = await Promise.all([params, getSessionUser()]);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { id } = await params;
 
   try {
     await apiFetch(`/api/v1/bookings/${id}/cancel`, { method: "PATCH", token: user.token });
