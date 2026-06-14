@@ -1,0 +1,23 @@
+name: Keep Alive
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://roomify-api-1ik6.onrender.com/api/v1/auth/login \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"email":"ping@keep-alive.internal","password":"ping"}')
+          echo "API responded with HTTP $STATUS"
+
+      - name: Ping Frontend
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://roomify-l3vv.onrender.com)
+          echo "Frontend responded with HTTP $STATUS"
