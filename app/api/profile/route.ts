@@ -26,11 +26,20 @@ export async function PATCH(request: NextRequest) {
     email: string;
   };
 
-  await apiFetch("/api/v1/users/me", {
-    method: "PATCH",
-    body: JSON.stringify({ firstName, lastName, email }),
-    token: user.token,
-  });
+  if (!firstName?.trim() && !lastName?.trim() && !email?.trim()) {
+    return NextResponse.json({ error: "Au moins un champ requis" }, { status: 400 });
+  }
+
+  try {
+    await apiFetch("/api/v1/users/me", {
+      method: "PATCH",
+      body: JSON.stringify({ firstName, lastName, email }),
+      token: user.token,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erreur lors de la mise à jour";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 
   const session = await getSession();
   if (session.user) {
@@ -58,10 +67,15 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Mot de passe incorrect" }, { status: 401 });
   }
 
-  await apiFetch("/api/v1/users/me", { method: "DELETE", token: user.token });
+  try {
+    await apiFetch("/api/v1/users/me", { method: "DELETE", token: user.token });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erreur lors de la suppression";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 
   const session = await getSession();
-  session.destroy();
+  await session.destroy();
 
   return NextResponse.json({ ok: true });
 }
