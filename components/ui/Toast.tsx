@@ -29,7 +29,7 @@ export function ToastCard({ toast }: { toast: ToastItem }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 64 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="w-80 bg-white rounded-xl overflow-hidden"
+      className="w-full sm:w-80 bg-white rounded-xl overflow-hidden"
       style={{
         borderLeft: `4px solid ${bar}`,
         boxShadow:

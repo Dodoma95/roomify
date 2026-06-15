@@ -1,31 +1,31 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type {Metadata} from "next";
+import {Inter} from "next/font/google";
 import "./globals.css";
-import { ToastContainer } from "@/components/ui/ToastContainer";
+import {ToastContainer} from "@/components/ui/ToastContainer";
 
 const inter = Inter({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+    variable: "--font-sans",
+    subsets: ["latin"],
+    weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Roomify — La marketplace des espaces professionnels",
-  description: "Trouvez et réservez des salles de réunion, espaces coworking, studios et espaces événementiels.",
-  icons: { icon: "/icon.svg" },
+    title: "Roomify — La marketplace des espaces professionnels",
+    description: "Trouvez et réservez des salles de réunion, espaces coworking, studios et espaces événementiels.",
+    icons: {icon: "/icon.svg"},
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                       children,
+                                   }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="fr" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+    return (
+        <html lang="fr" className={`${inter.variable} h-full antialiased`}>
+        <body className="min-h-full flex flex-col">
         {children}
-        <ToastContainer />
-      </body>
-    </html>
-  );
+        <ToastContainer/>
+        </body>
+        </html>
+    );
 }

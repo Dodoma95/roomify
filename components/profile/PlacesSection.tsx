@@ -14,7 +14,7 @@ export function PlacesSection() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
         <h1 className="text-[22px] font-semibold text-[#222222]">Mes espaces</h1>
         <Link
           href="/owner/places"

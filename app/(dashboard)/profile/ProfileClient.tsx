@@ -24,7 +24,7 @@ export function ProfileClient({ initialProfile, roles }: ProfileClientProps) {
   const isOwner = roles.some((r) => (["OWNER", "ADMIN", "SUPER_ADMIN"] as Role[]).includes(r));
 
   return (
-    <div className="flex gap-10">
+    <div className="flex flex-col gap-6 md:flex-row md:gap-10">
       <ProfileNav
         active={activeSection}
         onSelect={setActiveSection}
