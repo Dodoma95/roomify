@@ -107,7 +107,8 @@ function UnavailabilityPanel({ placeId }: { placeId: string }) {
         { method: "DELETE" }
       );
       if (!res.ok) {
-        toast.error("Impossible de supprimer la période.");
+        const d = await res.json().catch(() => ({}));
+        toast.error((d as {error?: string}).error ?? "Impossible de supprimer la période.");
       } else {
         toast.success("Période débloquée.");
         mutate();
@@ -135,15 +136,15 @@ function UnavailabilityPanel({ placeId }: { placeId: string }) {
         {periods.map((p) => (
           <div
             key={p.id}
-            className="flex items-center justify-between rounded-[8px] bg-[#f7f7f7] px-3 py-2"
+            className="flex items-start justify-between gap-2 rounded-[8px] bg-[#f7f7f7] px-3 py-2"
           >
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm min-w-0">
               <CalendarRange className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-              <span className="text-foreground">{fmtDate(p.startDate)}</span>
+              <span className="text-foreground whitespace-nowrap">{fmtDate(p.startDate)}</span>
               <span className="text-muted-foreground">→</span>
-              <span className="text-foreground">{fmtDate(p.endDate)}</span>
+              <span className="text-foreground whitespace-nowrap">{fmtDate(p.endDate)}</span>
               <span className={cn(
-                "ml-1 text-[11px] font-semibold px-1.5 py-0.5 rounded-full border",
+                "text-[11px] font-semibold px-1.5 py-0.5 rounded-full border",
                 p.reason === "OWNER_BLOCKED"
                   ? "bg-[#f2f2f2] text-[#3f3f3f] border-[#dddddd]"
                   : "bg-[#f7f7f7] text-[#6a6a6a] border-[#dddddd]"
@@ -156,7 +157,7 @@ function UnavailabilityPanel({ placeId }: { placeId: string }) {
                 type="button"
                 disabled={deletingId === p.id}
                 onClick={() => handleDelete(p.id)}
-                className="ml-2 text-muted-foreground hover:text-destructive transition-colors duration-150 cursor-pointer disabled:opacity-50"
+                className="shrink-0 text-muted-foreground hover:text-destructive transition-colors duration-150 cursor-pointer disabled:opacity-50"
                 aria-label="Supprimer la période"
               >
                 <X className="w-4 h-4" />
@@ -227,7 +228,8 @@ function BookingsPanel({ placeId }: { placeId: string }) {
         { method: "PATCH" }
       );
       if (!res.ok) {
-        toast.error("Une erreur est survenue.");
+        const d = await res.json().catch(() => ({}));
+        toast.error((d as {error?: string}).error ?? "Une erreur est survenue.");
       } else {
         toast.success(action === "confirm" ? "Réservation confirmée." : "Réservation annulée.");
         mutate();
@@ -371,7 +373,8 @@ export default function OwnerPlacesPage() {
     try {
       const res = await fetch(`/api/owner/places/${id}`, { method: "DELETE" });
       if (!res.ok) {
-        toast.error("Impossible de supprimer l'espace.");
+        const d = await res.json().catch(() => ({}));
+        toast.error((d as {error?: string}).error ?? "Impossible de supprimer l'espace.");
       } else {
         toast.success("Espace supprimé.");
         mutate();
@@ -386,7 +389,7 @@ export default function OwnerPlacesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Mes espaces</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -435,7 +438,7 @@ export default function OwnerPlacesPage() {
           const placeId   = String(place.id);
           const isConfirm = confirmId === placeId;
 
-          const unavailExpanded = expandedId === placeId && expandedPanel === "unavailability";
+          const unavailExpanded  = expandedId === placeId && expandedPanel === "unavailability";
           const bookingsExpanded = expandedId === placeId && expandedPanel === "bookings";
 
           return (
@@ -449,14 +452,11 @@ export default function OwnerPlacesPage() {
                   <Icon className="w-5 h-5 text-[#3f3f3f]" strokeWidth={1.5} />
                 </div>
 
-                {/* Info */}
+                {/* Info + actions empilées */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-[16px] font-semibold text-[#222222] leading-snug">{place.name}</p>
-                    <span className={cn(
-                      "text-[11px] font-semibold px-2.5 py-0.5 rounded-full border",
-                      statusCfg.className
-                    )}>
+                    <span className={cn("text-[11px] font-semibold px-2.5 py-0.5 rounded-full border", statusCfg.className)}>
                       {statusCfg.label}
                     </span>
                   </div>
@@ -466,84 +466,78 @@ export default function OwnerPlacesPage() {
                     {place.capacity != null && ` · ${place.capacity} pers.`}
                   </p>
                   {place.address && (
-                    <p className="text-[14px] text-[#6a6a6a] mt-0.5 truncate">{place.address}</p>
+                    <p className="text-[13px] text-[#6a6a6a] mt-0.5 truncate">{place.address}</p>
                   )}
-                </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-                  {/* Bookings toggle */}
-                  <button
-                    type="button"
-                    onClick={() => togglePanel(placeId, "bookings")}
-                    className={cn(
-                      "flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded-full border transition-all duration-150 cursor-pointer",
-                      bookingsExpanded
-                        ? "bg-[#ff385c]/5 text-[#ff385c] border-[#ff385c]"
-                        : "border-[#dddddd] text-[#6a6a6a] hover:border-[#222222] hover:text-[#222222]"
-                    )}
-                  >
-                    <BookOpen className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Réservations</span>
-                    {bookingsExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                  </button>
-
-                  {/* Unavailability toggle */}
-                  <button
-                    type="button"
-                    onClick={() => togglePanel(placeId, "unavailability")}
-                    className={cn(
-                      "flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded-full border transition-all duration-150 cursor-pointer",
-                      unavailExpanded
-                        ? "bg-[#ff385c]/5 text-[#ff385c] border-[#ff385c]"
-                        : "border-[#dddddd] text-[#6a6a6a] hover:border-[#222222] hover:text-[#222222]"
-                    )}
-                  >
-                    <CalendarOff className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Indisponibilités</span>
-                    {unavailExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                  </button>
-
-                  {/* Edit */}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="rounded-full text-[13px] gap-1 cursor-pointer border-[#dddddd] text-[#222222] hover:border-[#222222]"
-                    render={<Link href={`/owner/places/${placeId}/edit`} />}
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Modifier</span>
-                  </Button>
-
-                  {/* Delete */}
-                  <Button
-                    size="sm"
-                    variant={isConfirm ? "destructive" : "ghost"}
-                    className={cn(
-                      "rounded-full text-[13px] gap-1 cursor-pointer",
-                      isConfirm
-                        ? "font-semibold"
-                        : "text-[#6a6a6a] hover:text-[#c13515] hover:bg-transparent"
-                    )}
-                    disabled={deletingId === placeId}
-                    onClick={() => handleDelete(placeId)}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    {isConfirm ? "Confirmer" : "Supprimer"}
-                  </Button>
-                  {isConfirm && (
+                  {/* Actions — toujours sous l'info, wrappent naturellement */}
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
                     <button
                       type="button"
-                      className="text-[13px] text-[#6a6a6a] hover:text-[#222222] cursor-pointer"
-                      onClick={() => setConfirmId(null)}
+                      onClick={() => togglePanel(placeId, "bookings")}
+                      className={cn(
+                        "flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded-full border transition-all duration-150 cursor-pointer",
+                        bookingsExpanded
+                          ? "bg-[#ff385c]/5 text-[#ff385c] border-[#ff385c]"
+                          : "border-[#dddddd] text-[#6a6a6a] hover:border-[#222222] hover:text-[#222222]"
+                      )}
                     >
-                      Annuler
+                      <BookOpen className="w-3.5 h-3.5" />
+                      Réservations
+                      {bookingsExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                     </button>
-                  )}
+
+                    <button
+                      type="button"
+                      onClick={() => togglePanel(placeId, "unavailability")}
+                      className={cn(
+                        "flex items-center gap-1.5 text-[13px] font-medium px-3 py-1.5 rounded-full border transition-all duration-150 cursor-pointer",
+                        unavailExpanded
+                          ? "bg-[#ff385c]/5 text-[#ff385c] border-[#ff385c]"
+                          : "border-[#dddddd] text-[#6a6a6a] hover:border-[#222222] hover:text-[#222222]"
+                      )}
+                    >
+                      <CalendarOff className="w-3.5 h-3.5" />
+                      Indisponibilités
+                      {unavailExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    </button>
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-full text-[13px] gap-1 cursor-pointer border-[#dddddd] text-[#222222] hover:border-[#222222]"
+                      render={<Link href={`/owner/places/${placeId}/edit`} />}
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Modifier
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant={isConfirm ? "destructive" : "ghost"}
+                      className={cn(
+                        "rounded-full text-[13px] gap-1 cursor-pointer",
+                        isConfirm ? "font-semibold" : "text-[#6a6a6a] hover:text-[#c13515] hover:bg-transparent"
+                      )}
+                      disabled={deletingId === placeId}
+                      onClick={() => handleDelete(placeId)}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      {isConfirm ? "Confirmer" : "Supprimer"}
+                    </Button>
+                    {isConfirm && (
+                      <button
+                        type="button"
+                        className="text-[13px] text-[#6a6a6a] hover:text-[#222222] cursor-pointer"
+                        onClick={() => setConfirmId(null)}
+                      >
+                        Annuler
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {unavailExpanded && <UnavailabilityPanel placeId={placeId} />}
+              {unavailExpanded  && <UnavailabilityPanel placeId={placeId} />}
               {bookingsExpanded && <BookingsPanel placeId={placeId} />}
             </div>
           );

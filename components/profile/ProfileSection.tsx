@@ -63,7 +63,7 @@ export function ProfileSection({ initialData }: { initialData: ProfileData }) {
       <p className="text-[14px] text-[#6a6a6a] mb-6">Cliquez sur un champ pour le modifier</p>
 
       <div className="flex flex-col gap-4 mb-6">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           {FIELDS.slice(0, 2).map(({ key, label }) => (
             <FieldItem
               key={key}

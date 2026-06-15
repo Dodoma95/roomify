@@ -22,13 +22,32 @@ export async function apiFetch<T>(
   });
 
   if (!res.ok) {
-    const error = await res.text().catch(() => res.statusText);
-    const apiError = new Error(error || `API error ${res.status}`) as Error & { status: number };
+    let message = `Erreur ${res.status}`;
+    try {
+      const text = await res.text();
+      if (text) {
+        try {
+          const body = JSON.parse(text);
+          if (body && typeof body === "object") {
+            if (typeof body.message === "string") message = body.message;
+            else if (typeof body.error === "string") message = body.error;
+          } else {
+            message = text;
+          }
+        } catch {
+          message = text;
+        }
+      }
+    } catch { /* keep default */ }
+    const apiError = new Error(message) as Error & { status: number };
     apiError.status = res.status;
     throw apiError;
   }
 
-  return await res.json() as Promise<T>;
+  // 204 No Content ou body vide → pas de JSON à parser
+  if (res.status === 204) return undefined as T;
+  const text = await res.text();
+  return (text ? JSON.parse(text) : undefined) as T;
 }
 
 export async function graphqlFetch<T>(

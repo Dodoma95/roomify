@@ -1,18 +1,36 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import useSWR from "swr";
+import { DayPicker, DateRange } from "react-day-picker";
+import { fr } from "react-day-picker/locale";
 import { usePlaceById } from "@/hooks/usePlaces";
+import { useToast } from "@/hooks/useToast";
+import { UnavailabilityPeriod } from "@/types/unavailability";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowLeft, Building2,
-  Users, MapPin, Clock, User,
+  ArrowLeft, Building2, Users, MapPin, Clock, User,
+  Loader2, AlertCircle, CalendarCheck, CalendarOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-function buildImageSeed(type: string, id: string | number): string {
-  return `${type.toLowerCase().replace(/_/g, "-")}-${id}`;
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+function parseDate(str: string): Date {
+  const [y, m, d] = str.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function toISO(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function fmtDate(str: string): string {
+  return parseDate(str).toLocaleDateString("fr-FR", {
+    day: "numeric", month: "long", year: "numeric",
+  });
 }
 
 const TYPE_CONFIG: Record<string, { label: string }> = {
@@ -29,6 +47,10 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string }> = {
   REJECTED: { label: "Refusé",     badge: "bg-[#c13515] text-white border-transparent" },
 };
 
+function buildImageSeed(type: string, id: string | number): string {
+  return `${type.toLowerCase().replace(/_/g, "-")}-${id}`;
+}
+
 function Skeleton() {
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-12 animate-pulse">
@@ -39,9 +61,8 @@ function Skeleton() {
           <div className="h-7 w-2/3 bg-[#f2f2f2] rounded-md" />
           <div className="h-4 w-full bg-[#f2f2f2] rounded-md" />
           <div className="h-4 w-4/5 bg-[#f2f2f2] rounded-md" />
-          <div className="h-4 w-1/2 bg-[#f2f2f2] rounded-md" />
         </div>
-        <div className="h-56 bg-[#f2f2f2] rounded-[14px]" />
+        <div className="h-64 bg-[#f2f2f2] rounded-[14px]" />
       </div>
     </div>
   );
@@ -50,7 +71,75 @@ function Skeleton() {
 export default function PlaceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const toast = useToast();
   const { place, isLoading, error } = usePlaceById(id);
+
+  const { data: unavailability } = useSWR<UnavailabilityPeriod[]>(
+    `/api/places/${id}/unavailability`,
+    fetcher,
+    { revalidateOnFocus: false }
+  );
+
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [range, setRange] = useState<DateRange | undefined>();
+  const [notes, setNotes] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  const [booked, setBooked] = useState(false);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const periods: UnavailabilityPeriod[] = Array.isArray(unavailability) ? unavailability : [];
+
+  const unavailabilityMatchers = periods.map((p) => ({
+    from: parseDate(p.startDate),
+    to: parseDate(p.endDate),
+  }));
+
+  const disabledDays = [
+    { before: today },
+    ...unavailabilityMatchers,
+  ];
+
+  async function handleBook(e: React.FormEvent) {
+    e.preventDefault();
+    if (!range?.from || !range?.to) return;
+    setSubmitting(true);
+    setBookingError(null);
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          placeId: place?.id,
+          startDate: toISO(range.from),
+          endDate: toISO(range.to),
+          notes: notes.trim() || undefined,
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setBookingError((d as { error?: string }).error ?? "Une erreur est survenue.");
+        return;
+      }
+      setBooked(true);
+      toast.success("Réservation effectuée avec succès !");
+      setTimeout(() => router.push("/profile"), 1500);
+    } catch {
+      setBookingError("Impossible de contacter le serveur.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function openForm() {
+    setBookingOpen(true);
+    setBookingError(null);
+    setRange(undefined);
+    setNotes("");
+    setBooked(false);
+  }
 
   if (isLoading) return <Skeleton />;
 
@@ -112,7 +201,7 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
 
         {/* ── Left ── */}
         <div className="space-y-7">
-          {/* chips */}
+          {/* Type + capacity chips */}
           <div className="flex items-center gap-3 flex-wrap">
             <span className="rounded-full px-3 py-1 bg-[#f7f7f7] text-[#222222] border border-[#dddddd] text-[13px] font-medium">
               {type.label}
@@ -148,7 +237,6 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             )}
-
             {place.pricePerHour != null && (
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-[8px] bg-[#f2f2f2] flex items-center justify-center shrink-0">
@@ -160,7 +248,6 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             )}
-
             {place.owner && (
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-[8px] bg-[#f2f2f2] flex items-center justify-center shrink-0">
@@ -174,51 +261,192 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
               </div>
             )}
           </div>
+
+          {/* Unavailability list */}
+          {periods.length > 0 && (
+            <>
+              <div className="border-t border-[#dddddd]" />
+              <div className="space-y-3">
+                <h2 className="text-base font-semibold text-foreground">Périodes indisponibles</h2>
+                <div className="space-y-2">
+                  {periods.map((p, i) => (
+                    <div key={i} className="flex items-center gap-2 flex-wrap text-sm">
+                      <CalendarOff className="w-3.5 h-3.5 shrink-0 text-[#c13515]" />
+                      <span className="text-foreground">
+                        {fmtDate(p.startDate)} → {fmtDate(p.endDate)}
+                      </span>
+                      <span className={cn(
+                        "text-[10px] font-semibold px-1.5 py-0.5 rounded-full border",
+                        p.reason === "BOOKING"
+                          ? "bg-amber-50 text-amber-700 border-amber-200"
+                          : "bg-[#f2f2f2] text-[#6a6a6a] border-[#dddddd]"
+                      )}>
+                        {p.reason === "BOOKING" ? "Réservé" : "Bloqué"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* ── Right: booking card ── */}
         <div className="sticky top-20">
-          <div className="rounded-[14px] border border-[#dddddd] bg-white p-6 space-y-5 shadow-tier">
-            {place.pricePerHour != null && (
-              <p className="text-3xl font-bold text-foreground">
-                {place.pricePerHour} €
-                <span className="text-base font-normal text-muted-foreground ml-1">/heure</span>
-              </p>
-            )}
+          <div className="rounded-[14px] border border-[#dddddd] bg-white dark:bg-[#1a1a1a] shadow-tier overflow-hidden">
 
-            <div className="border-t border-[#dddddd]" />
-
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Statut</span>
-                <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", status.badge)}>
-                  {status.label}
-                </span>
-              </div>
-              {place.capacity != null && (
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Capacité</span>
-                  <span className="font-medium">{place.capacity} pers.</span>
+            {/* ── Success state ── */}
+            {booked ? (
+              <div className="flex flex-col items-center gap-3 py-8 px-6 text-center">
+                <div className="w-12 h-12 rounded-full bg-[#dcfce7] flex items-center justify-center">
+                  <CalendarCheck className="w-6 h-6 text-[#15803d]" />
                 </div>
-              )}
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Type</span>
-                <span className="font-medium">{type.label}</span>
+                <p className="font-semibold text-foreground">Réservation envoyée !</p>
+                <p className="text-sm text-muted-foreground">Redirection vers vos réservations…</p>
               </div>
-            </div>
 
-            <Button
-              className="w-full h-11 font-semibold cursor-pointer"
-              disabled={place.status !== "APPROVED"}
-            >
-              {place.status === "APPROVED" ? "Réserver cet espace" : "Non disponible"}
-            </Button>
+            /* ── Booking form ── */
+            ) : bookingOpen ? (
+              <form onSubmit={handleBook}>
+                {/* Header */}
+                <div className="flex items-center justify-between gap-2 px-5 py-4 border-b border-[#f2f2f2]">
+                  <p className="font-semibold text-foreground text-[15px]">Choisir vos dates</p>
+                  <button
+                    type="button"
+                    onClick={() => setBookingOpen(false)}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Annuler
+                  </button>
+                </div>
 
-            {place.status !== "APPROVED" ? (
-              <p className="text-xs text-center text-muted-foreground">
-                Cet espace n'est pas encore disponible à la réservation.
-              </p>
-            ) : null}
+                {/* Calendar */}
+                <div className="px-3 py-2 flex justify-center">
+                  <DayPicker
+                    mode="range"
+                    locale={fr}
+                    weekStartsOn={1}
+                    selected={range}
+                    onSelect={(r) => { setRange(r); setBookingError(null); }}
+                    disabled={disabledDays}
+                    modifiers={{ unavailable: unavailabilityMatchers }}
+                    modifiersClassNames={{ unavailable: "rdp-unavailable" }}
+                    showOutsideDays={false}
+                  />
+                </div>
+
+                <div className="px-5 pb-5 space-y-4">
+                  {/* Selected dates summary */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className={cn(
+                      "rounded-[8px] border px-3 py-2 text-sm transition-colors",
+                      range?.from ? "border-[#222222]" : "border-[#dddddd]"
+                    )}>
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">Arrivée</p>
+                      <p className={cn("font-medium", range?.from ? "text-foreground" : "text-muted-foreground")}>
+                        {range?.from ? range.from.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "—"}
+                      </p>
+                    </div>
+                    <div className={cn(
+                      "rounded-[8px] border px-3 py-2 text-sm transition-colors",
+                      range?.to ? "border-[#222222]" : "border-[#dddddd]"
+                    )}>
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">Départ</p>
+                      <p className={cn("font-medium", range?.to ? "text-foreground" : "text-muted-foreground")}>
+                        {range?.to ? range.to.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "—"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Notes <span className="font-normal">(optionnel)</span>
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Informations pour le propriétaire…"
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      className="w-full rounded-[8px] border border-[#dddddd] px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground bg-background focus:outline-none focus:ring-2 focus:ring-[#222222]/20 focus:border-[#222222] resize-none transition"
+                    />
+                  </div>
+
+                  {/* Error */}
+                  {bookingError && (
+                    <div className="flex items-start gap-2 rounded-[8px] bg-[#fef2f2] border border-[#fecaca] p-3 text-sm text-[#c13515]">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span>{bookingError}</span>
+                    </div>
+                  )}
+
+                  {place.pricePerHour != null && (
+                    <p className="text-xs text-muted-foreground text-center">
+                      {place.pricePerHour} €/h · total calculé à la confirmation
+                    </p>
+                  )}
+
+                  <Button
+                    type="submit"
+                    className="w-full h-10 font-semibold cursor-pointer"
+                    disabled={!range?.from || !range?.to || submitting}
+                  >
+                    {submitting
+                      ? <><Loader2 className="w-4 h-4 animate-spin" /> Envoi…</>
+                      : "Confirmer la réservation"
+                    }
+                  </Button>
+                </div>
+              </form>
+
+            /* ── Info card ── */
+            ) : (
+              <div className="p-6 space-y-5">
+                {place.pricePerHour != null && (
+                  <p className="text-3xl font-bold text-foreground">
+                    {place.pricePerHour} €
+                    <span className="text-base font-normal text-muted-foreground ml-1">/heure</span>
+                  </p>
+                )}
+                <div className="border-t border-[#dddddd]" />
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Statut</span>
+                    <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", status.badge)}>
+                      {status.label}
+                    </span>
+                  </div>
+                  {place.capacity != null && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Capacité</span>
+                      <span className="font-medium">{place.capacity} pers.</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Type</span>
+                    <span className="font-medium">{type.label}</span>
+                  </div>
+                  {periods.length > 0 && (
+                    <div className="flex items-center gap-1.5 pt-1 text-xs text-muted-foreground">
+                      <CalendarOff className="w-3.5 h-3.5 text-[#c13515]" />
+                      {periods.length} période{periods.length > 1 ? "s" : ""} indisponible{periods.length > 1 ? "s" : ""}
+                    </div>
+                  )}
+                </div>
+                <Button
+                  className="w-full h-11 font-semibold cursor-pointer"
+                  disabled={place.status !== "APPROVED"}
+                  onClick={openForm}
+                >
+                  {place.status === "APPROVED" ? "Réserver cet espace" : "Non disponible"}
+                </Button>
+                {place.status !== "APPROVED" && (
+                  <p className="text-xs text-center text-muted-foreground">
+                    Cet espace n'est pas encore disponible à la réservation.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
