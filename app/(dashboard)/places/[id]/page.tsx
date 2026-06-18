@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { DayPicker, DateRange } from "react-day-picker";
@@ -10,6 +9,8 @@ import { usePlaceById } from "@/hooks/usePlaces";
 import { useToast } from "@/hooks/useToast";
 import { UnavailabilityPeriod } from "@/types/unavailability";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import { PlaceDetailGallery } from "@/components/places/PlaceDetailGallery";
 import {
   ArrowLeft, Building2, Users, MapPin, Clock, User,
   Loader2, AlertCircle, CalendarCheck, CalendarOff,
@@ -46,10 +47,6 @@ const STATUS_CONFIG: Record<string, { label: string; badge: string }> = {
   PENDING:  { label: "En attente", badge: "bg-amber-500 text-white border-transparent" },
   REJECTED: { label: "Refusé",     badge: "bg-[#c13515] text-white border-transparent" },
 };
-
-function buildImageSeed(type: string, id: string | number): string {
-  return `${type.toLowerCase().replace(/_/g, "-")}-${id}`;
-}
 
 function Skeleton() {
   return (
@@ -176,25 +173,23 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
         Retour
       </button>
 
-      {/* Hero */}
-      <div className="relative h-72 rounded-[14px] overflow-hidden bg-[#f7f7f7]">
-        <Image
-          src={`https://picsum.photos/seed/${buildImageSeed(place.type, place.id)}/1600/600`}
-          alt={place.name}
-          fill
-          sizes="(max-width: 1024px) 100vw, 1024px"
-          className="object-cover"
-          priority
-        />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/65 to-transparent pt-20 pb-6 px-7">
-          <div className="flex items-end justify-between gap-4">
-            <h1 className="text-3xl font-bold text-white leading-tight">{place.name}</h1>
-            <span className={cn("shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full border backdrop-blur-sm", status.badge)}>
-              {status.label}
-            </span>
-          </div>
-        </div>
-      </div>
+      {/* Gallery */}
+      <PlaceDetailGallery place={place} />
+
+      {/* Title + status */}
+      <motion.div
+        className="flex items-start justify-between gap-4"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3, ease: "easeOut" }}
+      >
+        <h1 className="text-2xl font-bold text-[#222222] dark:text-[#f0f0f0] leading-tight">
+          {place.name}
+        </h1>
+        <span className={cn("shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full border", status.badge)}>
+          {status.label}
+        </span>
+      </motion.div>
 
       {/* Body */}
       <div className="grid lg:grid-cols-[1fr_320px] gap-8 items-start">
@@ -227,7 +222,12 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
           {/* Info tiles */}
           <div className="grid sm:grid-cols-2 gap-5">
             {place.address && (
-              <div className="flex items-start gap-3">
+              <motion.div
+                className="flex items-start gap-3"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.3, ease: "easeOut" }}
+              >
                 <div className="w-10 h-10 rounded-[8px] bg-[#f2f2f2] flex items-center justify-center shrink-0">
                   <MapPin className="w-4 h-4 text-[#6a6a6a]" />
                 </div>
@@ -235,10 +235,15 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">Adresse</p>
                   <p className="text-sm text-foreground">{place.address}</p>
                 </div>
-              </div>
+              </motion.div>
             )}
             {place.pricePerHour != null && (
-              <div className="flex items-start gap-3">
+              <motion.div
+                className="flex items-start gap-3"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.26, duration: 0.3, ease: "easeOut" }}
+              >
                 <div className="w-10 h-10 rounded-[8px] bg-[#f2f2f2] flex items-center justify-center shrink-0">
                   <Clock className="w-4 h-4 text-[#6a6a6a]" />
                 </div>
@@ -246,10 +251,15 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">Tarif</p>
                   <p className="text-sm font-semibold text-foreground">{place.pricePerHour} €/heure</p>
                 </div>
-              </div>
+              </motion.div>
             )}
             {place.owner && (
-              <div className="flex items-start gap-3">
+              <motion.div
+                className="flex items-start gap-3"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.32, duration: 0.3, ease: "easeOut" }}
+              >
                 <div className="w-10 h-10 rounded-[8px] bg-[#f2f2f2] flex items-center justify-center shrink-0">
                   <User className="w-4 h-4 text-[#6a6a6a]" />
                 </div>
@@ -258,7 +268,7 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
                   <p className="text-sm text-foreground">{place.owner.firstName} {place.owner.lastName}</p>
                   <p className="text-xs text-muted-foreground">{place.owner.email}</p>
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
 
@@ -293,161 +303,184 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
 
         {/* ── Right: booking card ── */}
         <div className="sticky top-20">
-          <div className="rounded-[14px] border border-[#dddddd] bg-white dark:bg-[#1a1a1a] shadow-tier overflow-hidden">
-
-            {/* ── Success state ── */}
-            {booked ? (
-              <div className="flex flex-col items-center gap-3 py-8 px-6 text-center">
-                <div className="w-12 h-12 rounded-full bg-[#dcfce7] flex items-center justify-center">
-                  <CalendarCheck className="w-6 h-6 text-[#15803d]" />
-                </div>
-                <p className="font-semibold text-foreground">Réservation envoyée !</p>
-                <p className="text-sm text-muted-foreground">Redirection vers vos réservations…</p>
-              </div>
-
-            /* ── Booking form ── */
-            ) : bookingOpen ? (
-              <form onSubmit={handleBook}>
-                {/* Header */}
-                <div className="flex items-center justify-between gap-2 px-5 py-4 border-b border-[#f2f2f2]">
-                  <p className="font-semibold text-foreground text-[15px]">Choisir vos dates</p>
-                  <button
-                    type="button"
-                    onClick={() => setBookingOpen(false)}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Annuler
-                  </button>
-                </div>
-
-                {/* Calendar */}
-                <div className="px-3 py-2 flex justify-center">
-                  <DayPicker
-                    mode="range"
-                    locale={fr}
-                    weekStartsOn={1}
-                    selected={range}
-                    onSelect={(r) => { setRange(r); setBookingError(null); }}
-                    disabled={disabledDays}
-                    modifiers={{ unavailable: unavailabilityMatchers }}
-                    modifiersClassNames={{ unavailable: "rdp-unavailable" }}
-                    showOutsideDays={false}
-                  />
-                </div>
-
-                <div className="px-5 pb-5 space-y-4">
-                  {/* Selected dates summary */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className={cn(
-                      "rounded-[8px] border px-3 py-2 text-sm transition-colors",
-                      range?.from ? "border-[#222222]" : "border-[#dddddd]"
-                    )}>
-                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">Arrivée</p>
-                      <p className={cn("font-medium", range?.from ? "text-foreground" : "text-muted-foreground")}>
-                        {range?.from ? range.from.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "—"}
-                      </p>
-                    </div>
-                    <div className={cn(
-                      "rounded-[8px] border px-3 py-2 text-sm transition-colors",
-                      range?.to ? "border-[#222222]" : "border-[#dddddd]"
-                    )}>
-                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">Départ</p>
-                      <p className={cn("font-medium", range?.to ? "text-foreground" : "text-muted-foreground")}>
-                        {range?.to ? range.to.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "—"}
-                      </p>
-                    </div>
+          <motion.div
+            className="rounded-[14px] border border-[#dddddd] bg-white dark:bg-[#1a1a1a] shadow-tier overflow-hidden"
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15, duration: 0.35, ease: "easeOut" }}
+          >
+            <AnimatePresence mode="wait">
+              {booked ? (
+                <motion.div
+                  key="success"
+                  className="flex flex-col items-center gap-3 py-8 px-6 text-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  <div className="w-12 h-12 rounded-full bg-[#dcfce7] flex items-center justify-center">
+                    <CalendarCheck className="w-6 h-6 text-[#15803d]" />
                   </div>
-
-                  {/* Notes */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                      Notes <span className="font-normal">(optionnel)</span>
-                    </label>
-                    <textarea
-                      rows={2}
-                      placeholder="Informations pour le propriétaire…"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      className="w-full rounded-[8px] border border-[#dddddd] px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground bg-background focus:outline-none focus:ring-2 focus:ring-[#222222]/20 focus:border-[#222222] resize-none transition"
-                    />
-                  </div>
-
-                  {/* Error */}
-                  {bookingError && (
-                    <div className="flex items-start gap-2 rounded-[8px] bg-[#fef2f2] border border-[#fecaca] p-3 text-sm text-[#c13515]">
-                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                      <span>{bookingError}</span>
+                  <p className="font-semibold text-foreground">Réservation envoyée !</p>
+                  <p className="text-sm text-muted-foreground">Redirection vers vos réservations…</p>
+                </motion.div>
+              ) : bookingOpen ? (
+                <motion.div
+                  key="form"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  <form onSubmit={handleBook}>
+                    {/* Header */}
+                    <div className="flex items-center justify-between gap-2 px-5 py-4 border-b border-[#f2f2f2]">
+                      <p className="font-semibold text-foreground text-[15px]">Choisir vos dates</p>
+                      <button
+                        type="button"
+                        onClick={() => setBookingOpen(false)}
+                        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        Annuler
+                      </button>
                     </div>
-                  )}
 
+                    {/* Calendar */}
+                    <div className="px-3 py-2 flex justify-center">
+                      <DayPicker
+                        mode="range"
+                        locale={fr}
+                        weekStartsOn={1}
+                        selected={range}
+                        onSelect={(r) => { setRange(r); setBookingError(null); }}
+                        disabled={disabledDays}
+                        modifiers={{ unavailable: unavailabilityMatchers }}
+                        modifiersClassNames={{ unavailable: "rdp-unavailable" }}
+                        showOutsideDays={false}
+                      />
+                    </div>
+
+                    <div className="px-5 pb-5 space-y-4">
+                      {/* Selected dates summary */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className={cn(
+                          "rounded-[8px] border px-3 py-2 text-sm transition-colors",
+                          range?.from ? "border-[#222222]" : "border-[#dddddd]"
+                        )}>
+                          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">Arrivée</p>
+                          <p className={cn("font-medium", range?.from ? "text-foreground" : "text-muted-foreground")}>
+                            {range?.from ? range.from.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "—"}
+                          </p>
+                        </div>
+                        <div className={cn(
+                          "rounded-[8px] border px-3 py-2 text-sm transition-colors",
+                          range?.to ? "border-[#222222]" : "border-[#dddddd]"
+                        )}>
+                          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">Départ</p>
+                          <p className={cn("font-medium", range?.to ? "text-foreground" : "text-muted-foreground")}>
+                            {range?.to ? range.to.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "—"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Notes */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                          Notes <span className="font-normal">(optionnel)</span>
+                        </label>
+                        <textarea
+                          rows={2}
+                          placeholder="Informations pour le propriétaire…"
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          className="w-full rounded-[8px] border border-[#dddddd] px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground bg-background focus:outline-none focus:ring-2 focus:ring-[#222222]/20 focus:border-[#222222] resize-none transition"
+                        />
+                      </div>
+
+                      {/* Error */}
+                      {bookingError && (
+                        <div className="flex items-start gap-2 rounded-[8px] bg-[#fef2f2] border border-[#fecaca] p-3 text-sm text-[#c13515]">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                          <span>{bookingError}</span>
+                        </div>
+                      )}
+
+                      {place.pricePerHour != null && (
+                        <p className="text-xs text-muted-foreground text-center">
+                          {place.pricePerHour} €/h · total calculé à la confirmation
+                        </p>
+                      )}
+
+                      <Button
+                        type="submit"
+                        className="w-full h-10 font-semibold cursor-pointer"
+                        disabled={!range?.from || !range?.to || submitting}
+                      >
+                        {submitting
+                          ? <><Loader2 className="w-4 h-4 animate-spin" /> Envoi…</>
+                          : "Confirmer la réservation"
+                        }
+                      </Button>
+                    </div>
+                  </form>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="info"
+                  className="p-6 space-y-5"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                >
                   {place.pricePerHour != null && (
-                    <p className="text-xs text-muted-foreground text-center">
-                      {place.pricePerHour} €/h · total calculé à la confirmation
+                    <p className="text-3xl font-bold text-foreground">
+                      {place.pricePerHour} €
+                      <span className="text-base font-normal text-muted-foreground ml-1">/heure</span>
                     </p>
                   )}
-
-                  <Button
-                    type="submit"
-                    className="w-full h-10 font-semibold cursor-pointer"
-                    disabled={!range?.from || !range?.to || submitting}
-                  >
-                    {submitting
-                      ? <><Loader2 className="w-4 h-4 animate-spin" /> Envoi…</>
-                      : "Confirmer la réservation"
-                    }
-                  </Button>
-                </div>
-              </form>
-
-            /* ── Info card ── */
-            ) : (
-              <div className="p-6 space-y-5">
-                {place.pricePerHour != null && (
-                  <p className="text-3xl font-bold text-foreground">
-                    {place.pricePerHour} €
-                    <span className="text-base font-normal text-muted-foreground ml-1">/heure</span>
-                  </p>
-                )}
-                <div className="border-t border-[#dddddd]" />
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Statut</span>
-                    <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", status.badge)}>
-                      {status.label}
-                    </span>
-                  </div>
-                  {place.capacity != null && (
+                  <div className="border-t border-[#dddddd]" />
+                  <div className="space-y-3 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Capacité</span>
-                      <span className="font-medium">{place.capacity} pers.</span>
+                      <span className="text-muted-foreground">Statut</span>
+                      <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", status.badge)}>
+                        {status.label}
+                      </span>
                     </div>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Type</span>
-                    <span className="font-medium">{type.label}</span>
+                    {place.capacity != null && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Capacité</span>
+                        <span className="font-medium">{place.capacity} pers.</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Type</span>
+                      <span className="font-medium">{type.label}</span>
+                    </div>
+                    {periods.length > 0 && (
+                      <div className="flex items-center gap-1.5 pt-1 text-xs text-muted-foreground">
+                        <CalendarOff className="w-3.5 h-3.5 text-[#c13515]" />
+                        {periods.length} période{periods.length > 1 ? "s" : ""} indisponible{periods.length > 1 ? "s" : ""}
+                      </div>
+                    )}
                   </div>
-                  {periods.length > 0 && (
-                    <div className="flex items-center gap-1.5 pt-1 text-xs text-muted-foreground">
-                      <CalendarOff className="w-3.5 h-3.5 text-[#c13515]" />
-                      {periods.length} période{periods.length > 1 ? "s" : ""} indisponible{periods.length > 1 ? "s" : ""}
-                    </div>
+                  <Button
+                    className="w-full h-11 font-semibold cursor-pointer"
+                    disabled={place.status !== "APPROVED"}
+                    onClick={openForm}
+                  >
+                    {place.status === "APPROVED" ? "Réserver cet espace" : "Non disponible"}
+                  </Button>
+                  {place.status !== "APPROVED" && (
+                    <p className="text-xs text-center text-muted-foreground">
+                      Cet espace n'est pas encore disponible à la réservation.
+                    </p>
                   )}
-                </div>
-                <Button
-                  className="w-full h-11 font-semibold cursor-pointer"
-                  disabled={place.status !== "APPROVED"}
-                  onClick={openForm}
-                >
-                  {place.status === "APPROVED" ? "Réserver cet espace" : "Non disponible"}
-                </Button>
-                {place.status !== "APPROVED" && (
-                  <p className="text-xs text-center text-muted-foreground">
-                    Cet espace n'est pas encore disponible à la réservation.
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </div>
       </div>
     </div>

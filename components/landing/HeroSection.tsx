@@ -16,7 +16,7 @@ export function HeroSection() {
     const photoY = useTransform(scrollYProgress, [0, 1], ["0px", "-60px"]);
 
     return (
-        <section ref={containerRef} className="relative overflow-hidden bg-white dark:bg-[#1a1a1a] min-h-[600px] flex items-center">
+        <section ref={containerRef} style={{ position: 'relative' }} className="relative overflow-hidden bg-white dark:bg-[#1a1a1a] min-h-[600px] flex items-center">
             <div className="relative z-10 max-w-[1280px] mx-auto px-6 py-24 grid lg:grid-cols-2 gap-12 items-center w-full">
 
                 {/* Left — text + search */}
@@ -84,6 +84,7 @@ export function HeroSection() {
                             src={`https://picsum.photos/seed/${MOSAIC_SEEDS[0]}/600/900`}
                             alt="Espace de travail"
                             fill
+                            priority
                             className="object-cover"
                             sizes="300px"
                         />
