@@ -9,6 +9,7 @@ import { UnavailabilityPeriod } from "@/types/unavailability";
 import { BookingResponse, BookingStatus } from "@/types/booking";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Avatar } from "@/components/ui/Avatar";
 import {
   Building2, Laptop, PartyPopper, Music2, Camera,
   Plus, Trash2, CalendarOff, ChevronDown, ChevronUp,
@@ -266,9 +267,17 @@ function BookingsPanel({ placeId }: { placeId: string }) {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-0.5 min-w-0">
-                  <p className="text-sm font-medium text-foreground">
-                    {b.userFirstName} {b.userLastName}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <Avatar
+                      src={b.userAvatarUrl}
+                      firstName={b.userFirstName}
+                      lastName={b.userLastName}
+                      size="sm"
+                    />
+                    <p className="text-sm font-medium text-foreground">
+                      {b.userFirstName} {b.userLastName}
+                    </p>
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     {fmtDate(b.startDate)} → {fmtDate(b.endDate)}
                   </p>

@@ -24,6 +24,8 @@ interface MeResponse {
   firstName: string;
   lastName: string;
   roles: SessionUser["roles"][number][];
+  avatarUrl?: string;
+  description?: string;
 }
 
 export function login(payload: LoginPayload): Promise<AuthResponse> {

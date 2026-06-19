@@ -9,7 +9,13 @@ export async function GET() {
 
     try {
         const me = await getMe(user.token);
-        return NextResponse.json({firstName: me.firstName, lastName: me.lastName, email: me.email});
+        return NextResponse.json({
+            firstName: me.firstName,
+            lastName: me.lastName,
+            email: me.email,
+            avatarUrl: me.avatarUrl,
+            description: me.description,
+        });
     } catch {
         const [firstName, ...rest] = user.name.split(" ");
         return NextResponse.json({firstName: firstName ?? "", lastName: rest.join(" "), email: user.email});
@@ -20,20 +26,25 @@ export async function PATCH(request: NextRequest) {
     const user = await getSessionUser();
     if (!user) return NextResponse.json({error: "Unauthorized"}, {status: 401});
 
-    const {firstName, lastName, email} = await request.json() as {
+    const {firstName, lastName, email, description} = await request.json() as {
         firstName: string;
         lastName: string;
         email: string;
+        description?: string;
     };
 
     if (!firstName?.trim() && !lastName?.trim() && !email?.trim()) {
         return NextResponse.json({error: "Au moins un champ requis"}, {status: 400});
     }
 
+    if (description !== undefined && description.length > 300) {
+        return NextResponse.json({error: "La bio ne peut pas dépasser 300 caractères."}, {status: 400});
+    }
+
     try {
         await apiFetch("/api/v1/users/me", {
             method: "PATCH",
-            body: JSON.stringify({firstName, lastName, email}),
+            body: JSON.stringify({firstName, lastName, email, description}),
             token: user.token,
         });
     } catch (err) {
@@ -48,7 +59,7 @@ export async function PATCH(request: NextRequest) {
         await session.save();
     }
 
-    return NextResponse.json({firstName, lastName, email});
+    return NextResponse.json({firstName, lastName, email, description});
 }
 
 export async function DELETE(request: NextRequest) {

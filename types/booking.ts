@@ -13,6 +13,8 @@ export interface BookingResponse {
   totalPrice: number;
   notes?: string;
   createdAt: string;
+  userAvatarUrl?: string;
+  userDescription?: string;
 }
 
 export interface BookingPlaceInfo {

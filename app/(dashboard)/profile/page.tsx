@@ -9,14 +9,22 @@ export default async function ProfilePage() {
         firstName: user!.name.split(" ")[0] ?? "",
         lastName: user!.name.split(" ").slice(1).join(" "),
         email: user!.email,
+        avatarUrl: undefined as string | undefined,
+        description: undefined as string | undefined,
     };
 
     try {
         const me = await getMe(user!.token);
-        initialProfile = {firstName: me.firstName, lastName: me.lastName, email: me.email};
+        initialProfile = {
+            firstName: me.firstName,
+            lastName: me.lastName,
+            email: me.email,
+            avatarUrl: me.avatarUrl,
+            description: me.description,
+        };
     } catch {
         // fallback to session data parsed above
     }
 
-    return <ProfileClient initialProfile={initialProfile} roles={user!.roles}/>;
+    return <ProfileClient initialProfile={initialProfile} roles={user!.roles} userId={user!.id}/>;
 }
