@@ -5,6 +5,7 @@ import Link from "next/link";
 import {BookingResponse, BookingStatus} from "@/types/booking";
 import {useToast} from "@/hooks/useToast";
 import {Button} from "@/components/ui/button";
+import {Avatar} from "@/components/ui/Avatar";
 import {cn} from "@/lib/utils";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -22,7 +23,13 @@ function formatDate(iso: string) {
     return new Date(iso).toLocaleDateString("fr-FR", {day: "numeric", month: "long", year: "numeric"});
 }
 
-export function BookingsSection() {
+interface BookingsSectionProps {
+    avatarSrc?: string;
+    firstName: string;
+    lastName: string;
+}
+
+export function BookingsSection({avatarSrc, firstName, lastName}: BookingsSectionProps) {
     const toast = useToast();
     const {data: bookings, isLoading, mutate} = useSWR<BookingResponse[]>(
         "/api/profile/bookings",
@@ -34,7 +41,7 @@ export function BookingsSection() {
             const res = await fetch(`/api/profile/bookings/${id}/cancel`, {method: "PATCH"});
             if (!res.ok) {
                 const d = await res.json().catch(() => ({}));
-                toast.error((d as {error?: string}).error ?? "Impossible d'annuler cette réservation");
+                toast.error((d as { error?: string }).error ?? "Impossible d'annuler cette réservation");
                 return;
             }
             await mutate();
@@ -79,7 +86,8 @@ export function BookingsSection() {
                                 className="bg-white border border-[#dddddd] rounded-[14px] shadow-tier p-5"
                             >
                                 <div className="flex justify-between items-start mb-2.5">
-                                    <div>
+                                    <div className="flex items-center gap-2.5">
+                                        <Avatar src={avatarSrc} firstName={firstName} lastName={lastName} size="sm"/>
                                         <p className="text-[15px] font-semibold text-[#222222]">{booking.placeName}</p>
                                     </div>
                                     <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-bold", s.className)}>

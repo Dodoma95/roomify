@@ -10,29 +10,20 @@ function isValidId(v: unknown): boolean {
 export async function GET() {
     const user = await getSessionUser();
 
-    console.log("[owner/places] user:", JSON.stringify(user));
-    console.log("[owner/places] user.id raw:", (user as Record<string, unknown> | null)?.id, "| typeof:", typeof (user as Record<string, unknown> | null)?.id);
-
     if (!user) {
-        console.log("[owner/places] → 401 : user is null");
         return NextResponse.json({error: "Unauthorized"}, {status: 401});
     }
 
     let ownerId: string | null = isValidId(user.id) ? String(user.id) : null;
-    console.log("[owner/places] ownerId from session:", ownerId);
 
     if (!ownerId) {
-        console.log("[owner/places] id manquant, fallback getMe...");
         try {
             const me = await getMe(user.token);
-            console.log("[owner/places] getMe FULL response:", JSON.stringify(me));
             if (isValidId(me.id)) ownerId = String(me.id);
-        } catch (e) {
-            console.log("[owner/places] getMe failed:", e);
+        } catch {
+            // getMe failed, ownerId stays null
         }
     }
-
-    console.log("[owner/places] final ownerId:", ownerId);
 
     if (!ownerId) {
         return NextResponse.json(

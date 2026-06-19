@@ -8,6 +8,8 @@ import {useRole} from "@/hooks/useRole";
 import {cn} from "@/lib/utils";
 import {Menu, X, Globe} from "lucide-react";
 import {Role} from "@/types/user";
+import {Avatar} from "@/components/ui/Avatar";
+import {buildAvatarSrc} from "@/lib/avatar";
 
 const NAV_LINKS: { href: string; label: string; roles: Role[] }[] = [
     {href: "/places", label: "Espaces", roles: ["USER", "OWNER", "ADMIN", "SUPER_ADMIN"]},
@@ -48,9 +50,9 @@ export function Navbar() {
         router.push("/login");
     }
 
-    const initials = user?.name
-        ? user.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
-        : "?";
+    const nameParts = user?.name?.split(" ") ?? [];
+    const firstName = nameParts[0] ?? "";
+    const lastName  = nameParts.slice(1).join(" ");
 
     function isActive(href: string) {
         if (href === "/places") return pathname === href;
@@ -116,11 +118,12 @@ export function Navbar() {
                                 )}
                             >
                                 <Menu className="w-4 h-4 text-[#222222] dark:text-[#f0f0f0]"/>
-                                <div className="w-8 h-8 rounded-full bg-[#222222] dark:bg-[#f0f0f0] flex items-center justify-center">
-                  <span className="text-xs font-semibold text-white dark:text-[#222222]">
-                    {initials}
-                  </span>
-                                </div>
+                                <Avatar
+                                    src={user ? buildAvatarSrc(user.id) : undefined}
+                                    firstName={firstName}
+                                    lastName={lastName}
+                                    size="sm"
+                                />
                             </button>
 
                             {accountOpen && (
